@@ -22,5 +22,9 @@ func (h *Handl) NewHan() http.Handler {
 	mux.HandleFunc("/auth/admin/signin", h.SignInAdmin)
 
 	mux.Handle("/api/actors", h.CheckIdentity(http.HandlerFunc(h.GetActors)))
+	mux.Handle("/api/actors", h.CheckIdentity(http.HandlerFunc(h.InsertActor)))
+	mux.Handle("/api/actors/:id", h.CheckIdentity(http.HandlerFunc(h.UpdateActor)))
+	mux.Handle("/api/actors/:id", h.CheckIdentity(http.HandlerFunc(h.DeleteActor)))
+	mux.Handle("/api/cinemas", h.CheckIdentity(http.HandlerFunc(h.InsertFilm)))
 	return mux
 }

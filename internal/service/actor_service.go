@@ -19,3 +19,11 @@ func (a *Actor_Service) GetActors() ([]models.Actor, error) {
 func (a *Actor_Service) InsertActor(actor models.Actor) (int, error) {
 	return a.repo.InsertActor(actor)
 }
+
+func (a *Actor_Service) UpdateActor(id int, actor models.ActorUpdate) error {
+	return a.repo.UpdateActor(id, actor)
+}
+
+func (a *Actor_Service) DeleteActor(id int) error {
+	return a.repo.DeleteActor(id)
+}

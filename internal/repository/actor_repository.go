@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Futturi/vktest/internal/models"
 	"github.com/jmoiron/sqlx"
@@ -41,4 +42,64 @@ func (r *Actor_Repo) InsertActor(actor models.Actor) (int, error) {
 		return 0, err
 	}
 	return id, nil
+}
+
+func (r *Actor_Repo) UpdateActor(id int, actor models.ActorUpdate) error {
+	args := make([]interface{}, 0)
+	setVal := make([]string, 0)
+	argid := 1
+	if actor.Genre != nil {
+		args = append(args, *actor.Genre)
+		setVal = append(setVal, fmt.Sprintf("genre=$%d", argid))
+		argid++
+	}
+	if actor.Name != nil {
+		args = append(args, *actor.Name)
+		setVal = append(setVal, fmt.Sprintf("name=$%d", argid))
+		argid++
+	}
+	if actor.Data != nil {
+		args = append(args, *actor.Data)
+		setVal = append(setVal, fmt.Sprintf("data=$%d", argid))
+		argid++
+	}
+	setQuery := strings.Join(setVal, ",")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE id = $1", actortable, setQuery)
+	_, err := r.db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	for _, cin := range *actor.Cinemas {
+		query2 := fmt.Sprintf("INSERT INTO %s(actor_id, cinema_id) VALUES($1,$2)", authorcinema)
+		cinId, err := r.FindIdCinemaByName(cin)
+		if err != nil {
+			return err
+		}
+		_, err = r.db.Exec(query2, cinId)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *Actor_Repo) FindIdCinemaByName(cin string) (int, error) {
+	var id int
+	query := fmt.Sprintf("SELECT id FROm %s WHERE name = $1", cinematable)
+	row := r.db.QueryRow(query, cin)
+	if err := row.Scan(&id); err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (r *Actor_Repo) DeleteActor(id int) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", actortable)
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

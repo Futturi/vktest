@@ -8,11 +8,13 @@ import (
 type Service struct {
 	AuthService
 	ActorService
+	CinemaService
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{AuthService: NewAuthService(repo.Authorization),
-		ActorService: NewActorService(repo.ActorRepo)}
+		ActorService:  NewActorService(repo.ActorRepo),
+		CinemaService: NewCinemaService(repo.CinemaRepo)}
 }
 
 type AuthService interface {
@@ -26,4 +28,10 @@ type AuthService interface {
 type ActorService interface {
 	GetActors() ([]models.Actor, error)
 	InsertActor(actor models.Actor) (int, error)
+	UpdateActor(id int, actor models.ActorUpdate) error
+	DeleteActor(id int) error
+}
+
+type CinemaService interface {
+	InsertCinema(cinema models.Cinema) (int, error)
 }

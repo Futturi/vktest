@@ -16,10 +16,13 @@ const (
 type Repository struct {
 	Authorization
 	ActorRepo
+	CinemaRepo
 }
 
 func NewRepostitory(db *sqlx.DB) *Repository {
-	return &Repository{Authorization: NewAuthRepo(db), ActorRepo: NewActorRepo(db)}
+	return &Repository{Authorization: NewAuthRepo(db),
+		ActorRepo:  NewActorRepo(db),
+		CinemaRepo: NewCinemaRepo(db)}
 }
 
 type Authorization interface {
@@ -32,4 +35,10 @@ type Authorization interface {
 type ActorRepo interface {
 	GetActors() ([]models.Actor, error)
 	InsertActor(actor models.Actor) (int, error)
+	UpdateActor(id int, actor models.ActorUpdate) error
+	DeleteActor(id int) error
+}
+
+type CinemaRepo interface {
+	InsertCinema(cinema models.Cinema) (int, error)
 }
