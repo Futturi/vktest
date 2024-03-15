@@ -49,7 +49,7 @@ func (a *Auth_Service) SignIn(User models.User) (string, error) {
 	return token.SignedString([]byte(jwtkey))
 }
 
-func (a *Auth_Service) ParseToken(header string) (string, string, error) {
+func (a *Auth_Service) ParseToken(header string) (string, bool, error) {
 	token, err := jwt.ParseWithClaims(header, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return 0, errors.New("invalid signing method")
@@ -57,13 +57,13 @@ func (a *Auth_Service) ParseToken(header string) (string, string, error) {
 		return []byte(jwtkey), nil
 	})
 	if err != nil {
-		return "", "", err
+		return "", false, err
 	}
 	Claims, ok := token.Claims.(*Claims)
 	if !ok {
-		return "", "", errors.New("token claims are not of type *tokenClaims")
+		return "", false, errors.New("token claims are not of type *tokenClaims")
 	}
-	return fmt.Sprintf("%d", Claims.Id), fmt.Sprintf("%v", Claims.IsAdmin), nil
+	return fmt.Sprintf("%d", Claims.Id), Claims.IsAdmin, nil
 }
 
 func (a *Auth_Service) SignUpAdmin(Admin models.Admin) (int, error) {
@@ -78,7 +78,7 @@ func (a *Auth_Service) SignInAdmin(Admin models.Admin) (string, error) {
 		return "", err
 	}
 	claims := Claims{id, true, jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(30 * time.Minute).Unix(),
+		ExpiresAt: time.Now().Add(60 * time.Minute).Unix(),
 		IssuedAt:  time.Now().Unix(),
 	}}
 

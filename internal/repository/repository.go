@@ -36,9 +36,14 @@ type ActorRepo interface {
 	GetActors() ([]models.Actor, error)
 	InsertActor(actor models.Actor) (int, error)
 	UpdateActor(id int, actor models.ActorUpdate) error
-	DeleteActor(id int) error
+	DeleteActor(id string) error
 }
 
 type CinemaRepo interface {
 	InsertCinema(cinema models.Cinema) (int, error)
+	UpdateFilm(id string, cinema models.CinemaUpdate) error
+	DeleteFilm(id string) error
+	GetCinemas(sor string) ([]models.Cinema, error)
+	Search(search models.Search) ([]models.Cinema, []models.Cinema, error)
+	Unification(hash map[string]int) ([]models.Cinema, error)
 }

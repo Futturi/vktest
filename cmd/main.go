@@ -13,6 +13,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+// @title Cinema App API
+// @description API Server 4 Cinema Application
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
 func main() {
 	err := InitConfig()
 	if err != nil {

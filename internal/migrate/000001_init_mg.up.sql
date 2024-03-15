@@ -3,7 +3,7 @@ CREATE TABLE actor
     id BIGSERIAL PRIMARY KEY,
     name TEXT,
     genre text,
-    data date
+    data int
 );
 
 CREATE TABLE cinema
@@ -11,7 +11,7 @@ CREATE TABLE cinema
     id BIGSERIAL PRIMARY KEY,
     name text,
     description text,
-    data date,
+    data int,
     rating int
 );
 

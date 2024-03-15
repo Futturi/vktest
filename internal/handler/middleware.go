@@ -32,16 +32,21 @@ func (h *Handl) CheckIdentity(next http.Handler) http.Handler {
 			err.NewErr(er)
 			slog.Error("error", er)
 		}
+		var isadmin string
+		if IsAdmin {
+			isadmin = "true"
+		} else {
+			isadmin = "false"
+		}
+		r.Header.Add(userHeader, userId)
+		r.Header.Add(adminHeader, isadmin)
 		w.Header().Add(userHeader, userId)
-		w.Header().Set(adminHeader, IsAdmin)
+		w.Header().Add(adminHeader, isadmin)
 		next.ServeHTTP(w, r)
 	})
 }
 
 func (h *Handl) GetPrivileage(r *http.Request) bool {
 	header := r.Header.Get(adminHeader)
-	if header == "true" {
-		return true
-	}
-	return false
+	return header == "true"
 }

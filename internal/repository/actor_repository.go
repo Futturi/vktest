@@ -18,18 +18,9 @@ func NewActorRepo(db *sqlx.DB) *Actor_Repo {
 
 func (r *Actor_Repo) GetActors() ([]models.Actor, error) {
 	var actors []models.Actor
-	query := fmt.Sprintf("SELECT * FROM %s", actortable)
+	query := fmt.Sprintf("SELECT name, genre, data FROM %s", actortable)
 	if err := r.db.Select(&actors, query); err != nil {
 		return []models.Actor{}, err
-	}
-
-	for _, act := range actors {
-		var cinemas []string
-		query2 := fmt.Sprintf("SELECT name FROM %s c INNER JOIN %s ca ON c.id = ca.cinema_id WHERE ca.actor_id = $1", cinematable, authorcinema)
-		if err := r.db.Select(&cinemas, query2); err != nil {
-			act.Cinemas = []string{}
-		}
-		act.Cinemas = cinemas
 	}
 	return actors, nil
 }
@@ -37,7 +28,7 @@ func (r *Actor_Repo) GetActors() ([]models.Actor, error) {
 func (r *Actor_Repo) InsertActor(actor models.Actor) (int, error) {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s(name, genre, data) VALUES($1, $2, $3) RETURNING id", actortable)
-	row := r.db.QueryRow(query, &id)
+	row := r.db.QueryRow(query, actor.Name, actor.Genre, actor.Data)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
@@ -64,24 +55,12 @@ func (r *Actor_Repo) UpdateActor(id int, actor models.ActorUpdate) error {
 		argid++
 	}
 	setQuery := strings.Join(setVal, ",")
-	query := fmt.Sprintf("UPDATE %s SET %s WHERE id = $1", actortable, setQuery)
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE id = $%d", actortable, setQuery, argid)
+	args = append(args, id)
 	_, err := r.db.Exec(query, args...)
 	if err != nil {
 		return err
 	}
-
-	for _, cin := range *actor.Cinemas {
-		query2 := fmt.Sprintf("INSERT INTO %s(actor_id, cinema_id) VALUES($1,$2)", authorcinema)
-		cinId, err := r.FindIdCinemaByName(cin)
-		if err != nil {
-			return err
-		}
-		_, err = r.db.Exec(query2, cinId)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -95,9 +74,14 @@ func (r *Actor_Repo) FindIdCinemaByName(cin string) (int, error) {
 	return id, nil
 }
 
-func (r *Actor_Repo) DeleteActor(id int) error {
+func (r *Actor_Repo) DeleteActor(id string) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", actortable)
-	_, err := r.db.Exec(query, id)
+	query2 := fmt.Sprintf("DELETE FROM %s WHERE actor_id = $1", authorcinema)
+	_, err := r.db.Exec(query2, id)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.Exec(query, id)
 	if err != nil {
 		return err
 	}

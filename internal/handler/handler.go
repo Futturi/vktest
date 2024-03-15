@@ -20,11 +20,11 @@ func (h *Handl) NewHan() http.Handler {
 	mux.HandleFunc("/auth/signin", h.SignIn)
 	mux.HandleFunc("/auth/admin/signup", h.SignUpAdmin)
 	mux.HandleFunc("/auth/admin/signin", h.SignInAdmin)
-
 	mux.Handle("/api/actors", h.CheckIdentity(http.HandlerFunc(h.GetActors)))
-	mux.Handle("/api/actors", h.CheckIdentity(http.HandlerFunc(h.InsertActor)))
-	mux.Handle("/api/actors/:id", h.CheckIdentity(http.HandlerFunc(h.UpdateActor)))
-	mux.Handle("/api/actors/:id", h.CheckIdentity(http.HandlerFunc(h.DeleteActor)))
+	mux.Handle("/api/actors/", h.CheckIdentity(http.HandlerFunc(h.UpdateActor)))
 	mux.Handle("/api/cinemas", h.CheckIdentity(http.HandlerFunc(h.InsertFilm)))
+	mux.Handle("/api/cinemas/search", h.CheckIdentity(http.HandlerFunc(h.Search)))
 	return mux
 }
+
+//TODO фикс даты в /api/actors(выводится юникс) и в /api/cinemas тоже
