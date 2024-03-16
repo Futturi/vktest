@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"log/slog"
 	"net/http"
 
+	"github.com/Futturi/vktest/internal/errs"
 	"github.com/Futturi/vktest/internal/models"
 )
 
@@ -21,25 +23,39 @@ import (
 // @Router /auth/signup [post]
 func (h *Handl) SignUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		http.Error(w, "incorrect methor", http.StatusBadRequest)
+		http.Error(w, "incorrect method", http.StatusBadRequest)
+		return
 	}
 	var User models.User
 	byt := r.Body
 	bytes, err := io.ReadAll(byt)
 	if err != nil {
 		slog.Error("error with sign up", slog.Any("error", err))
-		http.Error(w, "error with body", http.StatusBadRequest)
+		http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+		return
 	}
-	json.Unmarshal(bytes, &User)
+	err = json.Unmarshal(bytes, &User)
+	if err != nil {
+		slog.Error("error with sign up", slog.Any("error", err))
+		http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+		return
+	}
+	if User.Password == "" || User.Username == "" {
+		slog.Error("error with sign up", slog.Any("error", err))
+		http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+		return
+	}
 	id, err := h.service.SignUp(User)
 	if err != nil {
 		slog.Error("error with sign up", slog.Any("error", err))
-		http.Error(w, "error with sign up", http.StatusBadRequest)
+		http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+		return
 	}
-	ret := models.User{Id: id}
+	ret := map[string]interface{}{"id": id}
 	str, err := json.Marshal(ret)
 	if err != nil {
 		slog.Error("error while marshalling body", slog.Any("error", err))
+		return
 	}
 	w.Write(str)
 	slog.Info("created user with ", slog.Any("values", ret))
@@ -58,28 +74,44 @@ func (h *Handl) SignUp(w http.ResponseWriter, r *http.Request) {
 func (h *Handl) SignIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)
+		return
 	}
 	var User models.User
 	bytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		slog.Error("error with signing in", slog.Any("error", err))
 		http.Error(w, "error with body", http.StatusBadRequest)
+		return
 	}
-	json.Unmarshal(bytes, &User)
+	err = json.Unmarshal(bytes, &User)
+	if err != nil {
+		slog.Error("error with signing in", slog.Any("error", err))
+		http.Error(w, "error with body", http.StatusBadRequest)
+		return
+	}
+
+	if User.Password == "" || User.Username == "" {
+		slog.Error("error with signing in", slog.Any("error", err))
+		http.Error(w, "error with body", http.StatusBadRequest)
+		return
+	}
 
 	token, err := h.service.SignIn(User)
 	if err != nil {
 		slog.Error("error with signing in", slog.Any("error", err))
 		http.Error(w, "error with sign in", http.StatusBadRequest)
+		return
 	}
 	if err != nil {
 		slog.Error("error with signing in", slog.Any("error", err))
 		http.Error(w, "error with body", http.StatusBadRequest)
+		return
 	}
 	Token := models.Token{Access: token}
 	byt, err := json.Marshal(Token)
 	if err != nil {
 		slog.Error("error while marshalling body", slog.Any("error", err))
+		return
 	}
 	w.Write(byt)
 	slog.Info("user signed in with", slog.String("token", Token.Access))
@@ -98,23 +130,37 @@ func (h *Handl) SignIn(w http.ResponseWriter, r *http.Request) {
 func (h *Handl) SignUpAdmin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)
+		return
 	}
 	var Admin models.Admin
 	bytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		slog.Error("error with sign up", slog.Any("error", err))
 		http.Error(w, "error with body", http.StatusBadRequest)
+		return
 	}
-	json.Unmarshal(bytes, &Admin)
+	err = json.Unmarshal(bytes, &Admin)
+	if err != nil {
+		slog.Error("error with sign up", slog.Any("error", err))
+		http.Error(w, "error with body", http.StatusBadRequest)
+		return
+	}
+	if Admin.Password == "" || Admin.Username == "" {
+		slog.Error("error with sign up", slog.Any("error", err))
+		http.Error(w, "error with body", http.StatusBadRequest)
+		return
+	}
 	id, err := h.service.SignUpAdmin(Admin)
 	if err != nil {
 		slog.Error("error with sign up", slog.Any("error", err))
 		http.Error(w, "error with sign up", http.StatusBadRequest)
+		return
 	}
-	ret := models.User{Id: id}
+	ret := map[string]interface{}{"id": id}
 	str, err := json.Marshal(ret)
 	if err != nil {
 		slog.Error("error while marshalling body", slog.Any("error", err))
+		return
 	}
 	w.Write(str)
 	slog.Info("created admin with id: ", slog.Any("id", id))
@@ -133,24 +179,40 @@ func (h *Handl) SignUpAdmin(w http.ResponseWriter, r *http.Request) {
 func (h *Handl) SignInAdmin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)
+		return
 	}
 	var Admin models.Admin
 	bytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		slog.Error("error with signing in", slog.Any("error", err))
 		http.Error(w, "error with body", http.StatusBadRequest)
+		return
 	}
-	json.Unmarshal(bytes, &Admin)
+	err = json.Unmarshal(bytes, &Admin)
+	if err != nil {
+		slog.Error("error with signing in", slog.Any("error", err))
+		http.Error(w, "error with body", http.StatusBadRequest)
+		return
+	}
+
+	if Admin.Password == "" || Admin.Username == "" {
+		slog.Error("error with signing in", slog.Any("error", err))
+		http.Error(w, "error with body", http.StatusBadRequest)
+		return
+	}
+
 	token, err := h.service.SignInAdmin(Admin)
 	if err != nil {
 		slog.Error("error with signing in", slog.Any("error", err))
 		http.Error(w, "error with sign in", http.StatusBadRequest)
+		return
 	}
 	if err != nil {
 		slog.Error("error with signing in", slog.Any("error", err))
 		str, err := json.Marshal(err)
 		if err != nil {
 			slog.Error("error while marshalling body", slog.Any("error", err))
+			return
 		}
 		w.Write(str)
 	}
@@ -158,6 +220,7 @@ func (h *Handl) SignInAdmin(w http.ResponseWriter, r *http.Request) {
 	byt, err := json.Marshal(Token)
 	if err != nil {
 		slog.Error("error while marshalling body", slog.Any("error", err))
+		return
 	}
 	w.Write(byt)
 	slog.Info("admin signed in with", slog.String("token", Token.Access))

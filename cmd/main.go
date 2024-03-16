@@ -46,13 +46,13 @@ func main() {
 	if err != nil {
 		slog.Error("error with db", slog.Any("error", err))
 	}
-	if err := pkg.Migrat(); err != nil {
-		slog.Error("error with migratedb", slog.Any("error", err))
-	}
 
 	repo := repository.NewRepostitory(db)
 	service := service.NewService(repo)
 	han := handler.NewHandl(service)
+	if err := pkg.Migrat(viper.GetString("db.host")); err != nil {
+		slog.Error("error with migratedb", slog.Any("error", err))
+	}
 	server := new(server.Server)
 	go func() {
 		if err = server.InitServer(viper.GetString("port"), han.NewHan()); err != nil {

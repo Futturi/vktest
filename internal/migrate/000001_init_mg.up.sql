@@ -25,14 +25,14 @@ CREATE TABLE author_cinema
 CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
-    username text unique,
-    password text
+    username text unique not null,
+    password text not null
 );
 
 CREATE TABLE admins
 (
     id BIGSERIAL PRIMARY KEY,
-    username text unique,
-    password text
+    username text unique not null,
+    password text not null
 )
 

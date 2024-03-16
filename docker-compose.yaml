@@ -10,6 +10,7 @@ services:
      depends_on:
        - postgres
   postgres:
+    container_name: post
     image: postgres
     ports:
       - 5432:5432

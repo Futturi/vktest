@@ -5,18 +5,7 @@ import (
 	"github.com/Futturi/vktest/internal/repository"
 )
 
-type Service struct {
-	AuthService
-	ActorService
-	CinemaService
-}
-
-func NewService(repo *repository.Repository) *Service {
-	return &Service{AuthService: NewAuthService(repo.Authorization),
-		ActorService:  NewActorService(repo.ActorRepo),
-		CinemaService: NewCinemaService(repo.CinemaRepo)}
-}
-
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
 type AuthService interface {
 	SignUp(User models.User) (int, error)
 	SignIn(User models.User) (string, error)
@@ -38,4 +27,16 @@ type CinemaService interface {
 	DeleteFilm(id string) error
 	GetCinemas(sor string) ([]models.Cinema, error)
 	Search(search models.Search) ([]models.Cinema, error)
+}
+
+type Service struct {
+	AuthService
+	ActorService
+	CinemaService
+}
+
+func NewService(repo *repository.Repository) *Service {
+	return &Service{AuthService: NewAuthService(repo.Authorization),
+		ActorService:  NewActorService(repo.ActorRepo),
+		CinemaService: NewCinemaService(repo.CinemaRepo)}
 }

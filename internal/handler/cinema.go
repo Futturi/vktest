@@ -23,28 +23,33 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if !h.GetPrivileage(r) {
 			http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+			return
 		} else {
 			byt, err := io.ReadAll(r.Body)
 			if err != nil {
 				slog.Error("error while inserting actor", slog.Any("error", err))
 				http.Error(w, "error", http.StatusBadRequest)
+				return
 			}
 			var cinema models.Cinema
 			err = json.Unmarshal(byt, &cinema)
 			if err != nil {
 				slog.Error("error while unmarshalling body", slog.Any("error", err))
 				http.Error(w, "error", http.StatusBadRequest)
+				return
 			}
 			slog.Info(cinema.Data)
 			id, err := h.service.InsertCinema(cinema)
 			if err != nil {
 				slog.Error("error while inserting body", slog.Any("error", err))
 				http.Error(w, "error", http.StatusBadRequest)
+				return
 			}
 			byt2, err := json.Marshal(map[string]int{"id": id})
 			if err != nil {
 				slog.Error("error while marshalling result", slog.Any("error", err))
 				http.Error(w, "error", http.StatusInternalServerError)
+				return
 			}
 			w.Write(byt2)
 		}
@@ -69,10 +74,11 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {string} id
 // @Failure default {string} error
-// @Router /api/cinemas [put]
+// @Router /api/cinemas{id} [put]
 func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+		return
 	} else {
 		var cinema models.CinemaUpdate
 
@@ -80,19 +86,27 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("error while inserting actor", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
-		json.Unmarshal(byt, &cinema)
+		err = json.Unmarshal(byt, &cinema)
+		if err != nil {
+			slog.Error("error while unmarshalling body", slog.Any("error", err))
+			http.Error(w, "error", http.StatusBadRequest)
+			return
+		}
 
 		id := r.URL.Query().Get("id")
 		err = h.service.UpdateFilm(id, cinema)
 		if err != nil {
 			slog.Error("error while inserting body", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		byt2, err := json.Marshal(map[string]string{"id": id})
 		if err != nil {
 			slog.Error("error while marshalling body", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		w.Write(byt2)
 	}
@@ -106,21 +120,24 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {string} id
 // @Failure default {string} error
-// @Router /api/cinemas [delete]
+// @Router /api/cinemas{id} [delete]
 func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+		return
 	} else {
 		id := r.URL.Query().Get("id")
 		err := h.service.DeleteFilm(id)
 		if err != nil {
 			slog.Error("error while deleting cinema", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		byt, err := json.Marshal(map[string]string{"id": id})
 		if err != nil {
 			slog.Error("error while marshalling result", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		w.Write(byt)
 	}
@@ -134,7 +151,7 @@ func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} []models.Cinema
 // @Failure default {string} error
-// @Router /api/cinemas [get]
+// @Router /api/cinemas{sort} [get]
 func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	var sor string
 	switch {
@@ -152,12 +169,14 @@ func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("error while getting result", slog.Any("error", err))
 		http.Error(w, "error", http.StatusBadRequest)
+		return
 	}
 	slog.Info("123", slog.Any("123", cinemas))
 	byt, err := json.Marshal(cinemas)
 	if err != nil {
 		slog.Error("error while marshalling cinemas", slog.Any("error", err))
 		http.Error(w, "error", http.StatusInternalServerError)
+		return
 	}
 	w.Write(byt)
 }

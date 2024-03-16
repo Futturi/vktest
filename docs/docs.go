@@ -41,8 +41,8 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "update actor",
+            "post": {
+                "description": "insert actor",
                 "consumes": [
                     "application/json"
                 ],
@@ -52,8 +52,8 @@ const docTemplate = `{
                 "tags": [
                     "actors"
                 ],
-                "summary": "UpdateActor",
-                "operationId": "update-actor",
+                "summary": "InsertActor",
+                "operationId": "insert-actor",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -68,9 +68,11 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "insert actor",
+            }
+        },
+        "/api/actors{id}": {
+            "put": {
+                "description": "update actor",
                 "consumes": [
                     "application/json"
                 ],
@@ -80,8 +82,8 @@ const docTemplate = `{
                 "tags": [
                     "actors"
                 ],
-                "summary": "InsertActor",
-                "operationId": "insert-actor",
+                "summary": "UpdateActor",
+                "operationId": "update-actor",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -127,16 +129,49 @@ const docTemplate = `{
             }
         },
         "/api/cinemas": {
-            "get": {
-                "description": "get all cinemas",
+            "post": {
+                "description": "insert cinema",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "cinemas"
                 ],
-                "summary": "GetAllCinemas",
-                "operationId": "get-cinemas",
+                "summary": "InsertCinema",
+                "operationId": "insert-cinemas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cinemas/search": {
+            "post": {
+                "description": "search cinema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cinemas"
+                ],
+                "summary": "SearchCinema",
+                "operationId": "search-cinemas",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -154,7 +189,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/cinemas{id}": {
             "put": {
                 "description": "update cinema",
                 "consumes": [
@@ -168,34 +205,6 @@ const docTemplate = `{
                 ],
                 "summary": "UpdateCinema",
                 "operationId": "update-cinemas",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "insert cinema",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cinemas"
-                ],
-                "summary": "InsertCinema",
-                "operationId": "insert-cinemas",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -237,20 +246,17 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/cinemas/search": {
-            "post": {
-                "description": "search cinema",
-                "consumes": [
-                    "application/json"
-                ],
+        "/api/cinemas{sort}": {
+            "get": {
+                "description": "get all cinemas",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "cinemas"
                 ],
-                "summary": "SearchCinema",
-                "operationId": "search-cinemas",
+                "summary": "GetAllCinemas",
+                "operationId": "get-cinemas",
                 "responses": {
                     "200": {
                         "description": "OK",

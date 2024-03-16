@@ -25,11 +25,13 @@ func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("error while giving actors", slog.Any("error", err))
 			http.Error(w, "error", http.StatusInternalServerError)
+			return
 		}
 		byt, err := json.Marshal(actors)
 		if err != nil {
 			slog.Error("error while marshalling actors", slog.Any("error", err))
 			http.Error(w, "error", http.StatusInternalServerError)
+			return
 		}
 		w.Write(byt)
 	}
@@ -57,6 +59,7 @@ func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "you have not priviliage for doing this", http.StatusBadRequest)
+		return
 	} else {
 		var body models.Actor
 
@@ -64,6 +67,7 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("error with body", slog.Any("error", err))
 			http.Error(w, "error", http.StatusInternalServerError)
+			return
 		}
 		json.Unmarshal(byt, &body)
 
@@ -71,12 +75,14 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("error while inserting actor", slog.Any("error", err))
 			http.Error(w, "error", http.StatusInternalServerError)
+			return
 		}
 		mapa := map[string]int{"id": id}
 		byt2, err := json.Marshal(mapa)
 		if err != nil {
 			slog.Error("error while marshall actor", slog.Any("error", err))
 			http.Error(w, "error", http.StatusInternalServerError)
+			return
 		}
 		w.Write(byt2)
 	}
@@ -91,10 +97,11 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {integer} integer 1
 // @Failure default {string} error
-// @Router /api/actors [put]
+// @Router /api/actors{id} [put]
 func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+		return
 	} else {
 		id := r.URL.Query().Get("id")
 		byt, err := io.ReadAll(r.Body)
@@ -104,25 +111,34 @@ func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("error while inserting actor", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 
-		json.Unmarshal(byt, &actor)
+		err = json.Unmarshal(byt, &actor)
+		if err != nil {
+			slog.Error("error while unmarshalling body", slog.Any("error", err))
+			http.Error(w, "error", http.StatusBadRequest)
+			return
+		}
 
 		newid, err := strconv.Atoi(id)
 		if err != nil {
 			slog.Error("error while converting string to ind", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 
 		err = h.service.UpdateActor(newid, actor)
 		if err != nil {
 			slog.Error("error while updating actor", slog.Any("error", err))
 			http.Error(w, "error", http.StatusInternalServerError)
+			return
 		}
 		byt2, err := json.Marshal(map[string]int{"id": newid})
 		if err != nil {
 			slog.Error("error while marshalling result", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		w.Write(byt2)
 	}
@@ -138,22 +154,25 @@ func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {integer} integer 1
 // @Failure default {string} error
-// @Router /api/actors [delete]
+// @Router /api/actors{id} [delete]
 func (h *Handl) DeleteActor(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
 		if !h.GetPrivileage(r) {
 			http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+			return
 		} else {
 			newid := r.URL.Query().Get("id")
 			err := h.service.DeleteActor(newid)
 			if err != nil {
 				slog.Error("error while deleting actor", slog.Any("error", err))
 				http.Error(w, "error", http.StatusBadRequest)
+				return
 			}
 			byt2, err := json.Marshal(map[string]string{"id": newid})
 			if err != nil {
 				slog.Error("error while marshalling result", slog.Any("error", err))
 				http.Error(w, "error", http.StatusBadRequest)
+				return
 			}
 			w.Write(byt2)
 		}
