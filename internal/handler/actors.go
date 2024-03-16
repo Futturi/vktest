@@ -17,9 +17,8 @@ import (
 // @ID get-actors
 // @Produce json
 // @Success 200 {object} models.Actor
-// @Failure default {string} "error"
+// @Failure default {string} error
 // @Router /api/actors [get]
-
 func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		actors, err := h.service.GetActors()
@@ -53,9 +52,8 @@ func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure default {string} "error"
+// @Failure default {string} error
 // @Router /api/actors [post]
-
 func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "you have not priviliage for doing this", http.StatusBadRequest)
@@ -92,9 +90,8 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure default {string} "error"
+// @Failure default {string} error
 // @Router /api/actors [put]
-
 func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -140,9 +137,8 @@ func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure default {string} "error"
+// @Failure default {string} error
 // @Router /api/actors [delete]
-
 func (h *Handl) DeleteActor(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
 		if !h.GetPrivileage(r) {

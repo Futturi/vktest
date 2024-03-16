@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"fmt"
-
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -23,4 +22,8 @@ func InitPostgres(cfg PConfig) (*sqlx.DB, error) {
 		return nil, err
 	}
 	return conn, nil
+}
+
+func ShutDown(db *sqlx.DB) error {
+	return db.Close()
 }

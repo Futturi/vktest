@@ -16,10 +16,9 @@ import (
 // @ID insert-cinemas
 // @Accept json
 // @Produce json
-// @Success 200 {string} "id"
-// @Failure default {string} "error"
+// @Success 200 {string} id
+// @Failure default {string} error
 // @Router /api/cinemas [post]
-
 func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if !h.GetPrivileage(r) {
@@ -68,10 +67,9 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 // @ID update-cinemas
 // @Accept json
 // @Produce json
-// @Success 200 {string} "id"
-// @Failure default {string} "error"
+// @Success 200 {string} id
+// @Failure default {string} error
 // @Router /api/cinemas [put]
-
 func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -106,10 +104,9 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 // @Description delete cinema
 // @ID get-cinemas
 // @Produce json
-// @Success 200 {string} "id"
-// @Failure default {string} "error"
+// @Success 200 {string} id
+// @Failure default {string} error
 // @Router /api/cinemas [delete]
-
 func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -136,9 +133,8 @@ func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 // @ID get-cinemas
 // @Produce json
 // @Success 200 {object} []models.Cinema
-// @Failure default {string} "error"
+// @Failure default {string} error
 // @Router /api/cinemas [get]
-
 func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	var sor string
 	switch {
@@ -170,13 +166,12 @@ func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 // @Secutiry ApiKeyAuth
 // @Tags cinemas
 // @Description search cinema
-// @ID insert-cinemas
+// @ID search-cinemas
 // @Accept json
 // @Produce json
 // @Success 200 {object} []models.Cinema
-// @Failure default {string} "error"
+// @Failure default {string} error
 // @Router /api/cinemas/search [post]
-
 func (h *Handl) Search(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		var search models.Search

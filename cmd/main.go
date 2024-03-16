@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Futturi/vktest/internal/handler"
 	"github.com/Futturi/vktest/internal/repository"
@@ -14,6 +16,7 @@ import (
 )
 
 // @title Cinema App API
+// @version 1.0
 // @description API Server 4 Cinema Application
 
 // @host localhost:8080
@@ -24,14 +27,12 @@ import (
 // @name Authorization
 
 func main() {
-	err := InitConfig()
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	logg := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	slog.SetDefault(logg)
-	logg.Info("statring app in port: ", slog.String("port", viper.GetString("port")))
+	err := InitConfig()
+	if err != nil {
+		slog.Error("error with config", slog.Any("error", err))
+	}
 	pcfg := pkg.PConfig{
 		Hostname: viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
@@ -43,14 +44,35 @@ func main() {
 
 	db, err := pkg.InitPostgres(pcfg)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("error with db", slog.Any("error", err))
 	}
+	if err := pkg.Migrat(); err != nil {
+		slog.Error("error with migratedb", slog.Any("error", err))
+	}
+
 	repo := repository.NewRepostitory(db)
 	service := service.NewService(repo)
 	han := handler.NewHandl(service)
 	server := new(server.Server)
-	if err = server.InitServer(viper.GetString("port"), han.NewHan()); err != nil {
-		fmt.Println(err)
+	go func() {
+		if err = server.InitServer(viper.GetString("port"), han.NewHan()); err != nil {
+			slog.Error("error with server", slog.Any("error", err))
+		}
+	}()
+	logg.Info("statring app in port: ", slog.String("port", viper.GetString("port")))
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	logg.Info("shutdown server", slog.String("port", viper.GetString("port")))
+	if err = server.ShutDown(context.Background()); err != nil {
+		logg.Error("error with shutdown server", slog.String("port", viper.GetString("port")), slog.Any("error", err))
+		os.Exit(1)
+	}
+	if err = pkg.ShutDown(db); err != nil {
+		logg.Error("error with close db", slog.Any("error", err))
+		os.Exit(1)
 	}
 }
 func InitConfig() error {

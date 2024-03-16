@@ -1,6 +1,14 @@
 version: 'latest'
 
 services:
+  app:
+     build: ./
+     ports:
+       - '8080:8080'
+     container_name: vktestapp
+     restart: unless-stopped
+     depends_on:
+       - postgres
   postgres:
     image: postgres
     ports:

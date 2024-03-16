@@ -17,10 +17,8 @@ import (
 // @Produce json
 // @Param input body models.User true "account info"
 // @Success 200 {integer} integer 1
-// @Failure 400, 404 {string} "error with body"
-// @Failure default {string} "error with body"
-// @Router /auth/signup
-
+// @Failure default {string} error with body
+// @Router /auth/signup [post]
 func (h *Handl) SignUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)
@@ -47,18 +45,16 @@ func (h *Handl) SignUp(w http.ResponseWriter, r *http.Request) {
 	slog.Info("created user with ", slog.Any("values", ret))
 }
 
-// @Summary SingIn
+// @Summary SingInUser
 // @Tags auth
 // @Description login account 4 user
 // @ID login-account-user
 // @Accept json
 // @Produce json
 // @Param input body models.User true "account info"
-// @Success 200 {string} string "token"
-// @Failure 400, 404 {string} "error with body"
-// @Failure default {string} "error with body"
-// @Router /auth/signin
-
+// @Success 200 {string} token
+// @Failure default {string} error with body
+// @Router /auth/signin [post]
 func (h *Handl) SignIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)
@@ -97,10 +93,8 @@ func (h *Handl) SignIn(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param input body models.Admin true "account info"
 // @Success 200 {integer} integer 1
-// @Failure 400, 404 {string} "error with body"
-// @Failure default {string} "error with body"
+// @Failure default {string} error with body
 // @Router /auth/admin/signup [post]
-
 func (h *Handl) SignUpAdmin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)
@@ -127,17 +121,15 @@ func (h *Handl) SignUpAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary SingInAdmin
-// @Tags auth
+// @Tags authAdmin
 // @Description login account 4 admin
 // @ID login-account-admin
 // @Accept json
 // @Produce json
 // @Param input body models.Admin true "account info"
-// @Success 200 {string} string "token"
-// @Failure 400, 404 {string} "error with body"
-// @Failure default {string} "error with body"
-// @Router /auth/signin [post]
-
+// @Success 200 {string} token
+// @Failure default {string} error with body
+// @Router /auth/admin/signin [post]
 func (h *Handl) SignInAdmin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "incorrect methor", http.StatusBadRequest)

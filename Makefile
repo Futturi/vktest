@@ -1,7 +1,5 @@
 run:
 	go run cmd/main.go
-sqlup:
-	migrate -path internal/migrate -database "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"  up
-sqldown:
-	migrate -path internal/migrate -database "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"  down
+swag:
+	swag init --parseInternal --parseGoList -g cmd/main.go 
 .PHONY: sqlup sqldown run

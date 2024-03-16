@@ -1,0 +1,341 @@
+basePath: /
+definitions:
+  models.Actor:
+    properties:
+      data:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Admin:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.Cinema:
+    properties:
+      actors:
+        items:
+          type: string
+        type: array
+      data:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      rating:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server 4 Cinema Application
+  title: Cinema App API
+  version: "1.0"
+paths:
+  /api/actors:
+    delete:
+      consumes:
+      - application/json
+      description: delete actor
+      operationId: delete-actor
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: DeleteActor
+      tags:
+      - actors
+    get:
+      description: get all actors
+      operationId: get-actors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Actor'
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: GetAllActors
+      tags:
+      - actors
+    post:
+      consumes:
+      - application/json
+      description: insert actor
+      operationId: insert-actor
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: InsertActor
+      tags:
+      - actors
+    put:
+      consumes:
+      - application/json
+      description: update actor
+      operationId: update-actor
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: UpdateActor
+      tags:
+      - actors
+  /api/cinemas:
+    delete:
+      description: delete cinema
+      operationId: get-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: DeleteCinemas
+      tags:
+      - cinemas
+    get:
+      description: get all cinemas
+      operationId: get-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Cinema'
+            type: array
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: GetAllCinemas
+      tags:
+      - cinemas
+    post:
+      consumes:
+      - application/json
+      description: insert cinema
+      operationId: insert-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: InsertCinema
+      tags:
+      - cinemas
+    put:
+      consumes:
+      - application/json
+      description: update cinema
+      operationId: update-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: UpdateCinema
+      tags:
+      - cinemas
+  /api/cinemas/search:
+    post:
+      consumes:
+      - application/json
+      description: search cinema
+      operationId: search-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Cinema'
+            type: array
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: SearchCinema
+      tags:
+      - cinemas
+  /auth/admin/signin:
+    post:
+      consumes:
+      - application/json
+      description: login account 4 admin
+      operationId: login-account-admin
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Admin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: SingInAdmin
+      tags:
+      - authAdmin
+  /auth/admin/signup:
+    post:
+      consumes:
+      - application/json
+      description: create account 4 admin
+      operationId: create-account-admin
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Admin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: SingUpAdmin
+      tags:
+      - authAdmin
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: login account 4 user
+      operationId: login-account-user
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: SingInUser
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: create account 4 user
+      operationId: create-account-user
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: SingUpUser
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
