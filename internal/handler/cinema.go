@@ -9,6 +9,17 @@ import (
 	"github.com/Futturi/vktest/internal/models"
 )
 
+// @Summary InsertCinema
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description insert cinema
+// @ID insert-cinemas
+// @Accept json
+// @Produce json
+// @Success 200 {string} "id"
+// @Failure default {string} "error"
+// @Router /api/cinemas [post]
+
 func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if !h.GetPrivileage(r) {
@@ -50,6 +61,17 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// @Summary UpdateCinema
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description update cinema
+// @ID update-cinemas
+// @Accept json
+// @Produce json
+// @Success 200 {string} "id"
+// @Failure default {string} "error"
+// @Router /api/cinemas [put]
+
 func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -78,6 +100,16 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// @Summary DeleteCinemas
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description delete cinema
+// @ID get-cinemas
+// @Produce json
+// @Success 200 {string} "id"
+// @Failure default {string} "error"
+// @Router /api/cinemas [delete]
+
 func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -96,6 +128,16 @@ func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 		w.Write(byt)
 	}
 }
+
+// @Summary GetAllCinemas
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description get all cinemas
+// @ID get-cinemas
+// @Produce json
+// @Success 200 {object} []models.Cinema
+// @Failure default {string} "error"
+// @Router /api/cinemas [get]
 
 func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	var sor string
@@ -123,6 +165,17 @@ func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(byt)
 }
+
+// @Summary SearchCinema
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description search cinema
+// @ID insert-cinemas
+// @Accept json
+// @Produce json
+// @Success 200 {object} []models.Cinema
+// @Failure default {string} "error"
+// @Router /api/cinemas/search [post]
 
 func (h *Handl) Search(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {

@@ -26,7 +26,7 @@ type AuthService interface {
 }
 
 type ActorService interface {
-	GetActors() ([]models.Actor, error)
+	GetActors() ([]models.ActorSelect, error)
 	InsertActor(actor models.Actor) (int, error)
 	UpdateActor(id int, actor models.ActorUpdate) error
 	DeleteActor(id string) error

@@ -16,13 +16,29 @@ func NewActorRepo(db *sqlx.DB) *Actor_Repo {
 	return &Actor_Repo{db: db}
 }
 
-func (r *Actor_Repo) GetActors() ([]models.Actor, error) {
-	var actors []models.Actor
+func (r *Actor_Repo) GetActors() ([]models.ActorSelect, error) {
+	var result []models.ActorSelect
+	var actors []models.ActorSelect
 	query := fmt.Sprintf("SELECT name, genre, data FROM %s", actortable)
 	if err := r.db.Select(&actors, query); err != nil {
-		return []models.Actor{}, err
+		return []models.ActorSelect{}, err
 	}
-	return actors, nil
+	for _, acr := range actors {
+		var cinemas []string
+		query2 := fmt.Sprintf("SELECT name FROM %s c INNER JOIN %s ac ON ac.cinema_id = c.id WHERE ac.actor_id = $1", cinematable, authorcinema)
+		if err := r.db.Select(&cinemas, query2, acr.Id); err != nil {
+			return []models.ActorSelect{}, err
+		}
+		result = append(result, models.ActorSelect{
+			Id:      acr.Id,
+			Name:    acr.Name,
+			Genre:   acr.Genre,
+			Data:    acr.Data,
+			Cinemas: cinemas,
+		})
+	}
+
+	return result, nil
 }
 
 func (r *Actor_Repo) InsertActor(actor models.Actor) (int, error) {

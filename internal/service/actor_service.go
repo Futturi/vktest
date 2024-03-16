@@ -17,25 +17,26 @@ func NewActorService(repo repository.ActorRepo) *Actor_Service {
 	return &Actor_Service{repo: repo}
 }
 
-func (a *Actor_Service) GetActors() ([]models.Actor, error) {
-	var result []models.Actor
+func (a *Actor_Service) GetActors() ([]models.ActorSelect, error) {
+	var result []models.ActorSelect
 	actors, err := a.repo.GetActors()
 	if err != nil {
-		return []models.Actor{}, err
+		return []models.ActorSelect{}, err
 	}
 	for _, acr := range actors {
 		var b string
 		i, err := strconv.ParseInt(acr.Data, 10, 64)
 		if err != nil {
-			return []models.Actor{}, err
+			return []models.ActorSelect{}, err
 		}
 		tm := time.Unix(i, 0)
 		b = tm.Format("2006-Jan-02")
-		result = append(result, models.Actor{
-			Id:    acr.Id,
-			Name:  acr.Name,
-			Genre: acr.Genre,
-			Data:  b,
+		result = append(result, models.ActorSelect{
+			Id:      acr.Id,
+			Name:    acr.Name,
+			Genre:   acr.Genre,
+			Data:    b,
+			Cinemas: acr.Cinemas,
 		})
 	}
 	return result, nil

@@ -14,6 +14,14 @@ type ActorUpdate struct {
 	Data  *string `json:"data" db:"data"`
 }
 
+type ActorSelect struct {
+	Id      int      `json:"id" db:"id"`
+	Name    string   `json:"name" db:"name"`
+	Genre   string   `json:"genre" db:"genre"`
+	Data    string   `json:"data" db:"data"`
+	Cinemas []string `json:"cinemas"`
+}
+
 type Cinema struct {
 	Id          int      `json:"id" db:"id"`
 	Name        string   `json:"name" db:"name"`
