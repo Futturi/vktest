@@ -30,6 +30,7 @@ func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 		byt, _ := json.Marshal(actors)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt)
+		slog.Info("got actors", slog.Any("actors", actors))
 	}
 	if r.Method == "POST" {
 		h.InsertActor(w, r)
@@ -71,6 +72,7 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 		mapa := map[string]int{"id": id}
 		byt2, _ := json.Marshal(mapa)
 		w.Header().Set("Content-Type", "application/json")
+		slog.Info("inserted actor", slog.Any("actor", body))
 		w.Write(byt2)
 	}
 }
@@ -115,6 +117,7 @@ func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error", http.StatusInternalServerError)
 			return
 		}
+		slog.Info("updated actor", slog.Any("actor", actor))
 		byt2, _ := json.Marshal(map[string]int{"id": newid})
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
@@ -148,6 +151,7 @@ func (h *Handl) DeleteActor(w http.ResponseWriter, r *http.Request) {
 			byt2, _ := json.Marshal(map[string]string{"id": newid})
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(byt2)
+			slog.Info("deleted actor", slog.Any("id", newid))
 		}
 
 	}

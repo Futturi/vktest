@@ -53,6 +53,7 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.Write(byt2)
+			slog.Info("cinema inserted with id", slog.Int("id", id))
 		}
 	}
 	if r.Method == "PUT" {
@@ -101,6 +102,7 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 		byt2, _ := json.Marshal(map[string]string{"id": id})
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
+		slog.Info("cinema updated with id", slog.String("id", id))
 	}
 }
 
@@ -128,6 +130,7 @@ func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 		byt, _ := json.Marshal(map[string]string{"id": id})
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt)
+		slog.Info("cinema deleted with id", slog.String("id", id))
 	}
 }
 
@@ -163,6 +166,7 @@ func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	byt, _ := json.Marshal(cinemas)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(byt)
+	slog.Info("cinemas gotten", slog.Any("cinemas", cinemas))
 }
 
 // @Summary SearchCinema
@@ -199,5 +203,6 @@ func (h *Handl) Search(w http.ResponseWriter, r *http.Request) {
 		byt2, _ := json.Marshal(cinemas)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
+		slog.Info("cinemas gotten", slog.Any("cinemas", cinemas))
 	}
 }
