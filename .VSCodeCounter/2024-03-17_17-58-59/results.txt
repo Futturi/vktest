@@ -1,0 +1,99 @@
+Date : 2024-03-17 17:58:59
+Directory : /Users/lightbeag2/go/pkg/vktest
+Total : 49 files,  8259 codes, 225 comments, 811 blanks, all 9295 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| Go               |         38 |      4,420 |        225 |        509 |      5,154 |
+| HTML             |          1 |      2,613 |          0 |        287 |      2,900 |
+| JSON             |          1 |        563 |          0 |          0 |        563 |
+| YAML             |          3 |        389 |          0 |          2 |        391 |
+| Go Checksum File |          1 |        177 |          0 |          1 |        178 |
+| Go Module File   |          1 |         47 |          0 |          4 |         51 |
+| SQL              |          2 |         37 |          0 |          7 |         44 |
+| Docker           |          1 |          8 |          0 |          1 |          9 |
+| Makefile         |          1 |          5 |          0 |          0 |          5 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                          | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                             |         49 |      8,259 |        225 |        811 |      9,295 |
+| . (Files)                                                                     |          6 |      2,869 |          0 |        294 |      3,163 |
+| cmd                                                                           |          1 |         64 |          8 |          9 |         81 |
+| docs                                                                          |          3 |      1,506 |          2 |          6 |      1,514 |
+| internal                                                                      |         36 |      3,745 |        215 |        487 |      4,447 |
+| internal/config                                                               |          1 |          8 |          0 |          0 |          8 |
+| internal/errs                                                                 |          2 |         23 |          0 |          8 |         31 |
+| internal/handler                                                              |         10 |      1,495 |        127 |        127 |      1,749 |
+| internal/migrate                                                              |          2 |         37 |          0 |          7 |         44 |
+| internal/models                                                               |          1 |         52 |          0 |          9 |         61 |
+| internal/repository                                                           |          9 |      1,217 |         44 |        179 |      1,440 |
+| internal/repository (Files)                                                   |          8 |      1,015 |          1 |        135 |      1,151 |
+| internal/repository/mocksr                                                    |          1 |        202 |         43 |         44 |        289 |
+| internal/server                                                               |          1 |         21 |          0 |          5 |         26 |
+| internal/service                                                              |          8 |        866 |         44 |        144 |      1,054 |
+| internal/service (Files)                                                      |          7 |        664 |          1 |        100 |        765 |
+| internal/service/mocks                                                        |          1 |        202 |         43 |         44 |        289 |
+| internal/utils                                                                |          2 |         26 |          0 |          8 |         34 |
+| pkg                                                                           |          3 |         75 |          0 |         15 |         90 |
++-------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                      | language         | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| /Users/lightbeag2/go/pkg/vktest/Dockerfile                                    | Docker           |          8 |          0 |          1 |          9 |
+| /Users/lightbeag2/go/pkg/vktest/Makefile                                      | Makefile         |          5 |          0 |          0 |          5 |
+| /Users/lightbeag2/go/pkg/vktest/cmd/main.go                                   | Go               |         64 |          8 |          9 |         81 |
+| /Users/lightbeag2/go/pkg/vktest/cover.html                                    | HTML             |      2,613 |          0 |        287 |      2,900 |
+| /Users/lightbeag2/go/pkg/vktest/docker-compose.yaml                           | YAML             |         19 |          0 |          1 |         20 |
+| /Users/lightbeag2/go/pkg/vktest/docs/docs.go                                  | Go               |        581 |          2 |          5 |        588 |
+| /Users/lightbeag2/go/pkg/vktest/docs/swagger.json                             | JSON             |        563 |          0 |          0 |        563 |
+| /Users/lightbeag2/go/pkg/vktest/docs/swagger.yaml                             | YAML             |        362 |          0 |          1 |        363 |
+| /Users/lightbeag2/go/pkg/vktest/go.mod                                        | Go Module File   |         47 |          0 |          4 |         51 |
+| /Users/lightbeag2/go/pkg/vktest/go.sum                                        | Go Checksum File |        177 |          0 |          1 |        178 |
+| /Users/lightbeag2/go/pkg/vktest/internal/config/config.yaml                   | YAML             |          8 |          0 |          0 |          8 |
+| /Users/lightbeag2/go/pkg/vktest/internal/errs/error.go                        | Go               |         10 |          0 |          4 |         14 |
+| /Users/lightbeag2/go/pkg/vktest/internal/errs/error_test.go                   | Go               |         13 |          0 |          4 |         17 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/actors.go                    | Go               |        101 |         39 |         15 |        155 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/actors_test.go               | Go               |        264 |          0 |         23 |        287 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/auth.go                      | Go               |        165 |         40 |         12 |        217 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/auth_test.go                 | Go               |        301 |          0 |         27 |        328 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/cinema.go                    | Go               |        145 |         48 |         11 |        204 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/cinema_test.go               | Go               |        309 |          0 |         12 |        321 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/handler.go                   | Go               |         26 |          0 |          6 |         32 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/handler_test.go              | Go               |         11 |          0 |          4 |         15 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/middleware.go                | Go               |         63 |          0 |          8 |         71 |
+| /Users/lightbeag2/go/pkg/vktest/internal/handler/middleware_test.go           | Go               |        110 |          0 |          9 |        119 |
+| /Users/lightbeag2/go/pkg/vktest/internal/migrate/000001_init_mg.down.sql      | SQL              |          5 |          0 |          0 |          5 |
+| /Users/lightbeag2/go/pkg/vktest/internal/migrate/000001_init_mg.up.sql        | SQL              |         32 |          0 |          7 |         39 |
+| /Users/lightbeag2/go/pkg/vktest/internal/models/models.go                     | Go               |         52 |          0 |          9 |         61 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/actor_repository.go       | Go               |         89 |          0 |         11 |        100 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/actor_repository_test.go  | Go               |        210 |          0 |         21 |        231 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/auth_postgres.go          | Go               |         48 |          0 |          9 |         57 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/auth_postgres_test.go     | Go               |        229 |          0 |         32 |        261 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/cinema_repository.go      | Go               |        172 |          0 |         15 |        187 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/cinema_repository_test.go | Go               |        210 |          0 |         33 |        243 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/mocksr/mockr.go           | Go               |        202 |         43 |         44 |        289 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/repository.go             | Go               |         42 |          1 |          8 |         51 |
+| /Users/lightbeag2/go/pkg/vktest/internal/repository/repository_test.go        | Go               |         15 |          0 |          6 |         21 |
+| /Users/lightbeag2/go/pkg/vktest/internal/server/server.go                     | Go               |         21 |          0 |          5 |         26 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/actor_service.go             | Go               |         54 |          0 |          8 |         62 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/actor_service_test.go        | Go               |        144 |          0 |         28 |        172 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/auth_service.go              | Go               |         74 |          0 |         14 |         88 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/cinema_service.go            | Go               |        148 |          0 |         10 |        158 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/cinema_service_test.go       | Go               |        192 |          0 |         27 |        219 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/mocks/mock.go                | Go               |        202 |         43 |         44 |        289 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/service.go                   | Go               |         35 |          1 |          7 |         43 |
+| /Users/lightbeag2/go/pkg/vktest/internal/service/service_test.go              | Go               |         17 |          0 |          6 |         23 |
+| /Users/lightbeag2/go/pkg/vktest/internal/utils/utils.go                       | Go               |         13 |          0 |          4 |         17 |
+| /Users/lightbeag2/go/pkg/vktest/internal/utils/utils_test.go                  | Go               |         13 |          0 |          4 |         17 |
+| /Users/lightbeag2/go/pkg/vktest/pkg/migr.go                                   | Go               |         16 |          0 |          4 |         20 |
+| /Users/lightbeag2/go/pkg/vktest/pkg/newdb.go                                  | Go               |         25 |          0 |          5 |         30 |
+| /Users/lightbeag2/go/pkg/vktest/pkg/newdb_test.go                             | Go               |         34 |          0 |          6 |         40 |
+| Total                                                                         |                  |      8,259 |        225 |        811 |      9,295 |
++-------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
