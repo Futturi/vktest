@@ -68,6 +68,8 @@ paths:
           description: ""
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: GetAllActors
       tags:
       - actors
@@ -87,10 +89,12 @@ paths:
           description: ""
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: InsertActor
       tags:
       - actors
-  /api/actors{id}:
+  /api/actors/{id}:
     delete:
       consumes:
       - application/json
@@ -107,6 +111,8 @@ paths:
           description: ""
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: DeleteActor
       tags:
       - actors
@@ -126,6 +132,8 @@ paths:
           description: ""
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: UpdateActor
       tags:
       - actors
@@ -146,7 +154,72 @@ paths:
           description: ""
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: InsertCinema
+      tags:
+      - cinemas
+  /api/cinemas/{id}:
+    delete:
+      description: delete cinema
+      operationId: get-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteCinemas
+      tags:
+      - cinemas
+    put:
+      consumes:
+      - application/json
+      description: update cinema
+      operationId: update-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateCinema
+      tags:
+      - cinemas
+  /api/cinemas/{sort}:
+    get:
+      description: get all cinemas
+      operationId: get-cinemas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Cinema'
+            type: array
+        default:
+          description: ""
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllCinemas
       tags:
       - cinemas
   /api/cinemas/search:
@@ -168,64 +241,9 @@ paths:
           description: ""
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: SearchCinema
-      tags:
-      - cinemas
-  /api/cinemas{id}:
-    delete:
-      description: delete cinema
-      operationId: get-cinemas
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        default:
-          description: ""
-          schema:
-            type: string
-      summary: DeleteCinemas
-      tags:
-      - cinemas
-    put:
-      consumes:
-      - application/json
-      description: update cinema
-      operationId: update-cinemas
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        default:
-          description: ""
-          schema:
-            type: string
-      summary: UpdateCinema
-      tags:
-      - cinemas
-  /api/cinemas{sort}:
-    get:
-      description: get all cinemas
-      operationId: get-cinemas
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Cinema'
-            type: array
-        default:
-          description: ""
-          schema:
-            type: string
-      summary: GetAllCinemas
       tags:
       - cinemas
   /auth/admin/signin:

@@ -11,7 +11,7 @@ import (
 )
 
 // @Summary GetAllActors
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags actors
 // @Description get all actors
 // @ID get-actors
@@ -27,12 +27,8 @@ func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error", http.StatusInternalServerError)
 			return
 		}
-		byt, err := json.Marshal(actors)
-		if err != nil {
-			slog.Error("error while marshalling actors", slog.Any("error", err))
-			http.Error(w, "error", http.StatusInternalServerError)
-			return
-		}
+		byt, _ := json.Marshal(actors)
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt)
 	}
 	if r.Method == "POST" {
@@ -47,7 +43,7 @@ func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary InsertActor
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags actors
 // @Description insert actor
 // @ID insert-actor
@@ -63,12 +59,7 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 	} else {
 		var body models.Actor
 
-		byt, err := io.ReadAll(r.Body)
-		if err != nil {
-			slog.Error("error with body", slog.Any("error", err))
-			http.Error(w, "error", http.StatusInternalServerError)
-			return
-		}
+		byt, _ := io.ReadAll(r.Body)
 		json.Unmarshal(byt, &body)
 
 		id, err := h.service.InsertActor(body)
@@ -78,18 +69,14 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		mapa := map[string]int{"id": id}
-		byt2, err := json.Marshal(mapa)
-		if err != nil {
-			slog.Error("error while marshall actor", slog.Any("error", err))
-			http.Error(w, "error", http.StatusInternalServerError)
-			return
-		}
+		byt2, _ := json.Marshal(mapa)
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
 	}
 }
 
 // @Summary UpdateActor
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags actors
 // @Description update actor
 // @ID update-actor
@@ -97,24 +84,18 @@ func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {integer} integer 1
 // @Failure default {string} error
-// @Router /api/actors{id} [put]
+// @Router /api/actors/{id} [put]
 func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
 		return
 	} else {
 		id := r.URL.Query().Get("id")
-		byt, err := io.ReadAll(r.Body)
+		byt, _ := io.ReadAll(r.Body)
 
 		var actor models.ActorUpdate
 
-		if err != nil {
-			slog.Error("error while inserting actor", slog.Any("error", err))
-			http.Error(w, "error", http.StatusBadRequest)
-			return
-		}
-
-		err = json.Unmarshal(byt, &actor)
+		err := json.Unmarshal(byt, &actor)
 		if err != nil {
 			slog.Error("error while unmarshalling body", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
@@ -134,19 +115,15 @@ func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error", http.StatusInternalServerError)
 			return
 		}
-		byt2, err := json.Marshal(map[string]int{"id": newid})
-		if err != nil {
-			slog.Error("error while marshalling result", slog.Any("error", err))
-			http.Error(w, "error", http.StatusBadRequest)
-			return
-		}
+		byt2, _ := json.Marshal(map[string]int{"id": newid})
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
 	}
 
 }
 
 // @Summary DeleteActor
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags actors
 // @Description delete actor
 // @ID delete-actor
@@ -154,7 +131,7 @@ func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {integer} integer 1
 // @Failure default {string} error
-// @Router /api/actors{id} [delete]
+// @Router /api/actors/{id} [delete]
 func (h *Handl) DeleteActor(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
 		if !h.GetPrivileage(r) {
@@ -168,12 +145,8 @@ func (h *Handl) DeleteActor(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "error", http.StatusBadRequest)
 				return
 			}
-			byt2, err := json.Marshal(map[string]string{"id": newid})
-			if err != nil {
-				slog.Error("error while marshalling result", slog.Any("error", err))
-				http.Error(w, "error", http.StatusBadRequest)
-				return
-			}
+			byt2, _ := json.Marshal(map[string]string{"id": newid})
+			w.Header().Set("Content-Type", "application/json")
 			w.Write(byt2)
 		}
 

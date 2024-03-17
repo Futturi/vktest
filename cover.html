@@ -1,0 +1,2899 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>cmd: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/Futturi/vktest/cmd/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/Futturi/vktest/docs/docs.go (100.0%)</option>
+				
+				<option value="file2">github.com/Futturi/vktest/internal/errs/error.go (100.0%)</option>
+				
+				<option value="file3">github.com/Futturi/vktest/internal/handler/actors.go (68.7%)</option>
+				
+				<option value="file4">github.com/Futturi/vktest/internal/handler/auth.go (62.1%)</option>
+				
+				<option value="file5">github.com/Futturi/vktest/internal/handler/cinema.go (67.0%)</option>
+				
+				<option value="file6">github.com/Futturi/vktest/internal/handler/handler.go (8.3%)</option>
+				
+				<option value="file7">github.com/Futturi/vktest/internal/handler/middleware.go (89.7%)</option>
+				
+				<option value="file8">github.com/Futturi/vktest/internal/repository/actor_repository.go (53.6%)</option>
+				
+				<option value="file9">github.com/Futturi/vktest/internal/repository/auth_postgres.go (92.0%)</option>
+				
+				<option value="file10">github.com/Futturi/vktest/internal/repository/cinema_repository.go (30.5%)</option>
+				
+				<option value="file11">github.com/Futturi/vktest/internal/repository/mocksr/mockr.go (58.9%)</option>
+				
+				<option value="file12">github.com/Futturi/vktest/internal/repository/repository.go (100.0%)</option>
+				
+				<option value="file13">github.com/Futturi/vktest/internal/server/server.go (0.0%)</option>
+				
+				<option value="file14">github.com/Futturi/vktest/internal/service/actor_service.go (48.1%)</option>
+				
+				<option value="file15">github.com/Futturi/vktest/internal/service/auth_service.go (3.4%)</option>
+				
+				<option value="file16">github.com/Futturi/vktest/internal/service/cinema_service.go (41.0%)</option>
+				
+				<option value="file17">github.com/Futturi/vktest/internal/service/mocks/mock.go (100.0%)</option>
+				
+				<option value="file18">github.com/Futturi/vktest/internal/service/service.go (100.0%)</option>
+				
+				<option value="file19">github.com/Futturi/vktest/internal/utils/utils.go (100.0%)</option>
+				
+				<option value="file20">github.com/Futturi/vktest/pkg/migr.go (0.0%)</option>
+				
+				<option value="file21">github.com/Futturi/vktest/pkg/newdb.go (80.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "context"
+        "log/slog"
+        "os"
+        "os/signal"
+        "syscall"
+
+        "github.com/Futturi/vktest/internal/handler"
+        "github.com/Futturi/vktest/internal/repository"
+        "github.com/Futturi/vktest/internal/server"
+        "github.com/Futturi/vktest/internal/service"
+        "github.com/Futturi/vktest/pkg"
+        "github.com/spf13/viper"
+)
+
+// @title Cinema App API
+// @version 1.0
+// @description API Server 4 Cinema Application
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+func main() <span class="cov0" title="0">{
+        logg := slog.New(slog.NewTextHandler(os.Stdout, &amp;slog.HandlerOptions{Level: slog.LevelInfo}))
+        slog.SetDefault(logg)
+        err := InitConfig()
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with config", slog.Any("error", err))
+        }</span>
+        <span class="cov0" title="0">pcfg := pkg.PConfig{
+                Hostname: viper.GetString("db.host"),
+                Port:     viper.GetString("db.port"),
+                Username: viper.GetString("db.user"),
+                Password: viper.GetString("db.password"),
+                NameDB:   viper.GetString("db.name"),
+                SSLmode:  viper.GetString("db.sslmode"),
+        }
+
+        db, err := pkg.InitPostgres(pcfg)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with db", slog.Any("error", err))
+        }</span>
+
+        <span class="cov0" title="0">repo := repository.NewRepostitory(db)
+        service := service.NewService(repo)
+        han := handler.NewHandl(service)
+        server := new(server.Server)
+        go func() </span><span class="cov0" title="0">{
+                if err = server.InitServer(viper.GetString("port"), han.NewHan()); err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error with server", slog.Any("error", err))
+                }</span>
+        }()
+        <span class="cov0" title="0">logg.Info("statring app in port: ", slog.String("port", viper.GetString("port")))
+        if err := pkg.Migrat(viper.GetString("db.host")); err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with migratedb", slog.Any("error", err))
+        }</span>
+        <span class="cov0" title="0">quit := make(chan os.Signal, 1)
+        signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+        &lt;-quit
+
+        logg.Info("shutdown server", slog.String("port", viper.GetString("port")))
+        if err = server.ShutDown(context.Background()); err != nil </span><span class="cov0" title="0">{
+                logg.Error("error with shutdown server", slog.String("port", viper.GetString("port")), slog.Any("error", err))
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">if err = pkg.ShutDown(db); err != nil </span><span class="cov0" title="0">{
+                logg.Error("error with close db", slog.Any("error", err))
+                os.Exit(1)
+        }</span>
+}
+func InitConfig() error <span class="cov0" title="0">{
+        viper.SetConfigName("config")
+        viper.AddConfigPath("internal/config")
+        return viper.ReadInConfig()
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">// Package docs Code generated by swaggo/swag. DO NOT EDIT
+package docs
+
+import "github.com/swaggo/swag"
+
+const docTemplate = `{
+    "schemes": {{ marshal .Schemes }},
+    "swagger": "2.0",
+    "info": {
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
+        "contact": {},
+        "version": "{{.Version}}"
+    },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
+    "paths": {
+        "/api/actors": {
+            "get": {
+                "description": "get all actors",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "GetAllActors",
+                "operationId": "get-actors",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Actor"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "insert actor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "InsertActor",
+                "operationId": "insert-actor",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/actors{id}": {
+            "put": {
+                "description": "update actor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "UpdateActor",
+                "operationId": "update-actor",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete actor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "DeleteActor",
+                "operationId": "delete-actor",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cinemas": {
+            "post": {
+                "description": "insert cinema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cinemas"
+                ],
+                "summary": "InsertCinema",
+                "operationId": "insert-cinemas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cinemas/search": {
+            "post": {
+                "description": "search cinema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cinemas"
+                ],
+                "summary": "SearchCinema",
+                "operationId": "search-cinemas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Cinema"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cinemas{id}": {
+            "put": {
+                "description": "update cinema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cinemas"
+                ],
+                "summary": "UpdateCinema",
+                "operationId": "update-cinemas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete cinema",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cinemas"
+                ],
+                "summary": "DeleteCinemas",
+                "operationId": "get-cinemas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cinemas{sort}": {
+            "get": {
+                "description": "get all cinemas",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cinemas"
+                ],
+                "summary": "GetAllCinemas",
+                "operationId": "get-cinemas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Cinema"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/admin/signin": {
+            "post": {
+                "description": "login account 4 admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authAdmin"
+                ],
+                "summary": "SingInAdmin",
+                "operationId": "login-account-admin",
+                "parameters": [
+                    {
+                        "description": "account info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Admin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/admin/signup": {
+            "post": {
+                "description": "create account 4 admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authAdmin"
+                ],
+                "summary": "SingUpAdmin",
+                "operationId": "create-account-admin",
+                "parameters": [
+                    {
+                        "description": "account info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Admin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signin": {
+            "post": {
+                "description": "login account 4 user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "SingInUser",
+                "operationId": "login-account-user",
+                "parameters": [
+                    {
+                        "description": "account info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "description": "create account 4 user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "SingUpUser",
+                "operationId": "create-account-user",
+                "parameters": [
+                    {
+                        "description": "account info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Actor": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Admin": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Cinema": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "data": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}`
+
+// SwaggerInfo holds exported Swagger Info so clients can modify it
+var SwaggerInfo = &amp;swag.Spec{
+        Version:          "1.0",
+        Host:             "localhost:8080",
+        BasePath:         "/",
+        Schemes:          []string{},
+        Title:            "Cinema App API",
+        Description:      "API Server 4 Cinema Application",
+        InfoInstanceName: "swagger",
+        SwaggerTemplate:  docTemplate,
+        LeftDelim:        "{{",
+        RightDelim:       "}}",
+}
+
+func init() <span class="cov8" title="1">{
+        swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package errs
+
+import "encoding/json"
+
+type Err struct {
+        Error string `json:"error"`
+}
+
+func NewErr(err error) []byte <span class="cov8" title="1">{
+        rr := Err{Error: err.Error()}
+        byt, _ := json.Marshal(rr)
+        return byt
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package handler
+
+import (
+        "encoding/json"
+        "io"
+        "log/slog"
+        "net/http"
+        "strconv"
+
+        "github.com/Futturi/vktest/internal/models"
+)
+
+// @Summary GetAllActors
+// @Secutiry ApiKeyAuth
+// @Tags actors
+// @Description get all actors
+// @ID get-actors
+// @Produce json
+// @Success 200 {object} models.Actor
+// @Failure default {string} error
+// @Router /api/actors [get]
+func (h *Handl) GetActors(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method == "GET" </span><span class="cov8" title="1">{
+                actors, err := h.service.GetActors()
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while giving actors", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusInternalServerError)
+                        return
+                }</span>
+                <span class="cov8" title="1">byt, _ := json.Marshal(actors)
+                w.Header().Set("Content-Type", "application/json")
+                w.Write(byt)</span>
+        }
+        <span class="cov8" title="1">if r.Method == "POST" </span><span class="cov0" title="0">{
+                h.InsertActor(w, r)
+        }</span>
+        <span class="cov8" title="1">if r.Method == "PUT" </span><span class="cov0" title="0">{
+                h.UpdateActor(w, r)
+        }</span>
+        <span class="cov8" title="1">if r.Method == "DELETE" </span><span class="cov0" title="0">{
+                h.DeleteActor(w, r)
+        }</span>
+}
+
+// @Summary InsertActor
+// @Secutiry ApiKeyAuth
+// @Tags actors
+// @Description insert actor
+// @ID insert-actor
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure default {string} error
+// @Router /api/actors [post]
+func (h *Handl) InsertActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if !h.GetPrivileage(r) </span><span class="cov8" title="1">{
+                http.Error(w, "you have not priviliage for doing this", http.StatusBadRequest)
+                return
+        }</span> else<span class="cov8" title="1"> {
+                var body models.Actor
+
+                byt, _ := io.ReadAll(r.Body)
+                json.Unmarshal(byt, &amp;body)
+
+                id, err := h.service.InsertActor(body)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while inserting actor", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusInternalServerError)
+                        return
+                }</span>
+                <span class="cov8" title="1">mapa := map[string]int{"id": id}
+                byt2, _ := json.Marshal(mapa)
+                w.Header().Set("Content-Type", "application/json")
+                w.Write(byt2)</span>
+        }
+}
+
+// @Summary UpdateActor
+// @Secutiry ApiKeyAuth
+// @Tags actors
+// @Description update actor
+// @ID update-actor
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure default {string} error
+// @Router /api/actors{id} [put]
+func (h *Handl) UpdateActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if !h.GetPrivileage(r) </span><span class="cov8" title="1">{
+                http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+                return
+        }</span> else<span class="cov8" title="1"> {
+                id := r.URL.Query().Get("id")
+                byt, _ := io.ReadAll(r.Body)
+
+                var actor models.ActorUpdate
+
+                err := json.Unmarshal(byt, &amp;actor)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while unmarshalling body", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">newid, err := strconv.Atoi(id)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while converting string to ind", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">err = h.service.UpdateActor(newid, actor)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while updating actor", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusInternalServerError)
+                        return
+                }</span>
+                <span class="cov8" title="1">byt2, _ := json.Marshal(map[string]int{"id": newid})
+                w.Header().Set("Content-Type", "application/json")
+                w.Write(byt2)</span>
+        }
+
+}
+
+// @Summary DeleteActor
+// @Secutiry ApiKeyAuth
+// @Tags actors
+// @Description delete actor
+// @ID delete-actor
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure default {string} error
+// @Router /api/actors{id} [delete]
+func (h *Handl) DeleteActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method == "DELETE" </span><span class="cov8" title="1">{
+                if !h.GetPrivileage(r) </span><span class="cov8" title="1">{
+                        http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+                        return
+                }</span> else<span class="cov8" title="1"> {
+                        newid := r.URL.Query().Get("id")
+                        err := h.service.DeleteActor(newid)
+                        if err != nil </span><span class="cov0" title="0">{
+                                slog.Error("error while deleting actor", slog.Any("error", err))
+                                http.Error(w, "error", http.StatusBadRequest)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">byt2, _ := json.Marshal(map[string]string{"id": newid})
+                        w.Header().Set("Content-Type", "application/json")
+                        w.Write(byt2)</span>
+                }
+
+        }
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package handler
+
+import (
+        "encoding/json"
+        "errors"
+        "io"
+        "log/slog"
+        "net/http"
+
+        "github.com/Futturi/vktest/internal/errs"
+        "github.com/Futturi/vktest/internal/models"
+)
+
+// @Summary SingUpUser
+// @Tags auth
+// @Description create account 4 user
+// @ID create-account-user
+// @Accept json
+// @Produce json
+// @Param input body models.User true "account info"
+// @Success 200 {integer} integer 1
+// @Failure default {string} error with body
+// @Router /auth/signup [post]
+func (h *Handl) SignUp(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != "POST" </span><span class="cov0" title="0">{
+                http.Error(w, "incorrect method", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">var User models.User
+        byt := r.Body
+        bytes, err := io.ReadAll(byt)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(bytes, &amp;User)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">if User.Password == "" || User.Username == "" </span><span class="cov8" title="1">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">id, err := h.service.SignUp(User)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, string(errs.NewErr(errors.New("invalid body"))), http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">ret := map[string]interface{}{"id": id}
+        str, _ := json.Marshal(ret)
+        w.Header().Set("Content-Type", "application/json")
+        w.Write(str)
+        slog.Info("created user with ", slog.Any("values", ret))</span>
+}
+
+// @Summary SingInUser
+// @Tags auth
+// @Description login account 4 user
+// @ID login-account-user
+// @Accept json
+// @Produce json
+// @Param input body models.User true "account info"
+// @Success 200 {string} token
+// @Failure default {string} error with body
+// @Router /auth/signin [post]
+func (h *Handl) SignIn(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != "POST" </span><span class="cov0" title="0">{
+                http.Error(w, "incorrect methor", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">var User models.User
+        bytes, err := io.ReadAll(r.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(bytes, &amp;User)
+        if err != nil </span><span class="cov8" title="1">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">if User.Password == "" || User.Username == "" </span><span class="cov0" title="0">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">token, err := h.service.SignIn(User)
+        if err != nil </span><span class="cov8" title="1">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with sign in", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">Token := models.Token{Access: token}
+        byt, _ := json.Marshal(Token)
+        w.Header().Set("Content-Type", "application/json")
+        w.Write(byt)
+        slog.Info("user signed in with", slog.String("token", Token.Access))</span>
+}
+
+// @Summary SingUpAdmin
+// @Tags authAdmin
+// @Description create account 4 admin
+// @ID create-account-admin
+// @Accept json
+// @Produce json
+// @Param input body models.Admin true "account info"
+// @Success 200 {integer} integer 1
+// @Failure default {string} error with body
+// @Router /auth/admin/signup [post]
+func (h *Handl) SignUpAdmin(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != "POST" </span><span class="cov0" title="0">{
+                http.Error(w, "incorrect methor", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">var Admin models.Admin
+        bytes, err := io.ReadAll(r.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(bytes, &amp;Admin)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">if Admin.Password == "" || Admin.Username == "" </span><span class="cov8" title="1">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">id, err := h.service.SignUpAdmin(Admin)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with sign up", slog.Any("error", err))
+                http.Error(w, "error with sign up", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">ret := map[string]interface{}{"id": id}
+        str, _ := json.Marshal(ret)
+
+        w.Header().Set("Content-Type", "application/json")
+        w.Write(str)
+        slog.Info("created admin with id: ", slog.Any("id", id))</span>
+}
+
+// @Summary SingInAdmin
+// @Tags authAdmin
+// @Description login account 4 admin
+// @ID login-account-admin
+// @Accept json
+// @Produce json
+// @Param input body models.Admin true "account info"
+// @Success 200 {string} token
+// @Failure default {string} error with body
+// @Router /auth/admin/signin [post]
+func (h *Handl) SignInAdmin(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != "POST" </span><span class="cov0" title="0">{
+                http.Error(w, "incorrect methor", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">var Admin models.Admin
+        bytes, err := io.ReadAll(r.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(bytes, &amp;Admin)
+        if err != nil </span><span class="cov8" title="1">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">if Admin.Password == "" || Admin.Username == "" </span><span class="cov0" title="0">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with body", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">token, err := h.service.SignInAdmin(Admin)
+        if err != nil </span><span class="cov8" title="1">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                http.Error(w, "error with sign in", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error with signing in", slog.Any("error", err))
+                str, err := json.Marshal(err)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while marshalling body", slog.Any("error", err))
+                        return
+                }</span>
+                <span class="cov0" title="0">w.Write(str)</span>
+        }
+        <span class="cov8" title="1">Token := models.Token{Access: token}
+        byt, _ := json.Marshal(Token)
+        w.Header().Set("Content-Type", "application/json")
+        w.Write(byt)
+        slog.Info("admin signed in with", slog.String("token", Token.Access))</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package handler
+
+import (
+        "encoding/json"
+        "io"
+        "log/slog"
+        "net/http"
+
+        "github.com/Futturi/vktest/internal/models"
+)
+
+// @Summary InsertCinema
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description insert cinema
+// @ID insert-cinemas
+// @Accept json
+// @Produce json
+// @Success 200 {string} id
+// @Failure default {string} error
+// @Router /api/cinemas [post]
+func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method == "POST" </span><span class="cov8" title="1">{
+                if !h.GetPrivileage(r) </span><span class="cov8" title="1">{
+                        http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+                        return
+                }</span> else<span class="cov8" title="1"> {
+                        byt, err := io.ReadAll(r.Body)
+                        if err != nil </span><span class="cov0" title="0">{
+                                slog.Error("error while inserting actor", slog.Any("error", err))
+                                http.Error(w, "error", http.StatusBadRequest)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">var cinema models.Cinema
+                        err = json.Unmarshal(byt, &amp;cinema)
+                        if err != nil </span><span class="cov8" title="1">{
+                                slog.Error("error while unmarshalling body", slog.Any("error", err))
+                                http.Error(w, "error", http.StatusBadRequest)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">slog.Info(cinema.Data)
+                        id, err := h.service.InsertCinema(cinema)
+                        if err != nil </span><span class="cov0" title="0">{
+                                slog.Error("error while inserting body", slog.Any("error", err))
+                                http.Error(w, "error", http.StatusBadRequest)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">byt2, err := json.Marshal(map[string]int{"id": id})
+                        if err != nil </span><span class="cov0" title="0">{
+                                slog.Error("error while marshalling result", slog.Any("error", err))
+                                http.Error(w, "error", http.StatusInternalServerError)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                        w.Write(byt2)</span>
+                }
+        }
+        <span class="cov8" title="1">if r.Method == "PUT" </span><span class="cov0" title="0">{
+                h.UpdateFilm(w, r)
+        }</span>
+        <span class="cov8" title="1">if r.Method == "DELETE" </span><span class="cov0" title="0">{
+                h.DeleteFilm(w, r)
+        }</span>
+        <span class="cov8" title="1">if r.Method == "GET" </span><span class="cov0" title="0">{
+                h.GetFilms(w, r)
+        }</span>
+}
+
+// @Summary UpdateCinema
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description update cinema
+// @ID update-cinemas
+// @Accept json
+// @Produce json
+// @Success 200 {string} id
+// @Failure default {string} error
+// @Router /api/cinemas{id} [put]
+func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if !h.GetPrivileage(r) </span><span class="cov8" title="1">{
+                http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+                return
+        }</span> else<span class="cov8" title="1"> {
+                var cinema models.CinemaUpdate
+
+                byt, _ := io.ReadAll(r.Body)
+                err := json.Unmarshal(byt, &amp;cinema)
+                if err != nil </span><span class="cov8" title="1">{
+                        slog.Error("error while unmarshalling body", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov8" title="1">id := r.URL.Query().Get("id")
+                err = h.service.UpdateFilm(id, cinema)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while inserting body", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+                <span class="cov8" title="1">byt2, _ := json.Marshal(map[string]string{"id": id})
+                w.Header().Set("Content-Type", "application/json")
+                w.Write(byt2)</span>
+        }
+}
+
+// @Summary DeleteCinemas
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description delete cinema
+// @ID get-cinemas
+// @Produce json
+// @Success 200 {string} id
+// @Failure default {string} error
+// @Router /api/cinemas{id} [delete]
+func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if !h.GetPrivileage(r) </span><span class="cov8" title="1">{
+                http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
+                return
+        }</span> else<span class="cov8" title="1"> {
+                id := r.URL.Query().Get("id")
+                err := h.service.DeleteFilm(id)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while deleting cinema", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+                <span class="cov8" title="1">byt, _ := json.Marshal(map[string]string{"id": id})
+                w.Header().Set("Content-Type", "application/json")
+                w.Write(byt)</span>
+        }
+}
+
+// @Summary GetAllCinemas
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description get all cinemas
+// @ID get-cinemas
+// @Produce json
+// @Success 200 {object} []models.Cinema
+// @Failure default {string} error
+// @Router /api/cinemas{sort} [get]
+func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        var sor string
+        switch </span>{
+        case !r.URL.Query().Has("sort") || r.URL.Query().Get("sort") == "rating":<span class="cov8" title="1">
+                sor = "rating"</span>
+        case r.URL.Query().Get("sort") == "name":<span class="cov0" title="0">
+                sor = "name"</span>
+        case r.URL.Query().Get("sort") == "date":<span class="cov0" title="0">
+                sor = "date"</span>
+        default:<span class="cov0" title="0">
+                sor = "rating"</span>
+        }
+
+        <span class="cov8" title="1">cinemas, err := h.service.GetCinemas(sor)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error while getting result", slog.Any("error", err))
+                http.Error(w, "error", http.StatusBadRequest)
+                return
+        }</span>
+        <span class="cov8" title="1">slog.Info("123", slog.Any("123", cinemas))
+        byt, _ := json.Marshal(cinemas)
+        w.Header().Set("Content-Type", "application/json")
+        w.Write(byt)</span>
+}
+
+// @Summary SearchCinema
+// @Secutiry ApiKeyAuth
+// @Tags cinemas
+// @Description search cinema
+// @ID search-cinemas
+// @Accept json
+// @Produce json
+// @Success 200 {object} []models.Cinema
+// @Failure default {string} error
+// @Router /api/cinemas/search [post]
+func (h *Handl) Search(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method == "POST" </span><span class="cov8" title="1">{
+                var search models.Search
+                byt, err := io.ReadAll(r.Body)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error with data", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+                <span class="cov8" title="1">err = json.Unmarshal(byt, &amp;search)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while unmarshalling data", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+                <span class="cov8" title="1">cinemas, err := h.service.Search(search)
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("error while searching data", slog.Any("error", err))
+                        http.Error(w, "error", http.StatusBadRequest)
+                        return
+                }</span>
+                <span class="cov8" title="1">byt2, _ := json.Marshal(cinemas)
+                w.Header().Set("Content-Type", "application/json")
+                w.Write(byt2)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package handler
+
+import (
+        "net/http"
+
+        _ "github.com/Futturi/vktest/docs"
+        "github.com/Futturi/vktest/internal/service"
+        "github.com/swaggo/http-swagger/v2"
+)
+
+type Handl struct {
+        service *service.Service
+}
+
+func NewHandl(service *service.Service) *Handl <span class="cov8" title="1">{
+        return &amp;Handl{service: service}
+}</span>
+
+func (h *Handl) NewHan() http.Handler <span class="cov0" title="0">{
+        mux := http.NewServeMux()
+        mux.HandleFunc("/swagger/", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
+        mux.HandleFunc("/auth/signup", h.SignUp)
+        mux.HandleFunc("/auth/signin", h.SignIn)
+        mux.HandleFunc("/auth/admin/signup", h.SignUpAdmin)
+        mux.HandleFunc("/auth/admin/signin", h.SignInAdmin)
+        mux.Handle("/api/actors", h.CheckIdentity(http.HandlerFunc(h.GetActors)))
+        mux.Handle("/api/actors/", h.CheckIdentity(http.HandlerFunc(h.UpdateActor)))
+        mux.Handle("/api/cinemas", h.CheckIdentity(http.HandlerFunc(h.InsertFilm)))
+        mux.Handle("/api/cinemas/search", h.CheckIdentity(http.HandlerFunc(h.Search)))
+        return mux
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package handler
+
+import (
+        "errors"
+        "log/slog"
+        "net/http"
+        "strings"
+
+        "github.com/Futturi/vktest/internal/errs"
+)
+
+const (
+        userHeader  = "userid"
+        adminHeader = "isAdmin"
+)
+
+func (h *Handl) CheckIdentity(next http.Handler) http.Handler <span class="cov8" title="1">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                auth := r.Header.Get("Authorization")
+                if auth == "" </span><span class="cov8" title="1">{
+                        http.Error(w, "empty auth header", http.StatusUnauthorized)
+                        errs.NewErr(errors.New("empty auth header"))
+                        slog.Error("error", errors.New("empty auth header"))
+                        return
+                }</span>
+                <span class="cov8" title="1">headerParts := strings.Split(auth, " ")
+                if len(headerParts) != 2 </span><span class="cov8" title="1">{
+                        http.Error(w, "invalid header", http.StatusUnauthorized)
+                        errs.NewErr(errors.New("invalid header"))
+                        slog.Error("error", errors.New("invalid header"))
+                        return
+                }</span>
+
+                <span class="cov8" title="1">if headerParts[0] != "Bearer" </span><span class="cov8" title="1">{
+                        http.Error(w, "invalid header", http.StatusUnauthorized)
+                        errs.NewErr(errors.New("invalid header"))
+                        slog.Error("error", errors.New("invalid header"))
+                        return
+                }</span>
+                <span class="cov8" title="1">if headerParts[1] == "" </span><span class="cov8" title="1">{
+                        http.Error(w, "empty token", http.StatusUnauthorized)
+                        errs.NewErr(errors.New("empty token"))
+                        slog.Error("error", errors.New("empty token"))
+                        return
+                }</span>
+
+                <span class="cov8" title="1">userId, IsAdmin, er := h.service.ParseToken(headerParts[1])
+                if er != nil </span><span class="cov0" title="0">{
+                        errs.NewErr(er)
+                        slog.Error("error", er)
+                        return
+                }</span>
+                <span class="cov8" title="1">var isadmin string
+                if IsAdmin </span><span class="cov8" title="1">{
+                        isadmin = "true"
+                }</span> else<span class="cov0" title="0"> {
+                        isadmin = "false"
+                }</span>
+                <span class="cov8" title="1">r.Header.Add(userHeader, userId)
+                r.Header.Add(adminHeader, isadmin)
+                w.Header().Add(userHeader, userId)
+                w.Header().Add(adminHeader, isadmin)
+                next.ServeHTTP(w, r)</span>
+        })
+}
+
+func (h *Handl) GetPrivileage(r *http.Request) bool <span class="cov8" title="1">{
+        header := r.Header.Get(adminHeader)
+        return header == "true"
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package repository
+
+import (
+        "fmt"
+        "strings"
+
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/jmoiron/sqlx"
+)
+
+type Actor_Repo struct {
+        db *sqlx.DB
+}
+
+func NewActorRepo(db *sqlx.DB) *Actor_Repo <span class="cov8" title="1">{
+        return &amp;Actor_Repo{db: db}
+}</span>
+
+func (r *Actor_Repo) GetActors() ([]models.ActorSelect, error) <span class="cov8" title="1">{
+        var result []models.ActorSelect
+        var actors []models.ActorSelect
+        query := fmt.Sprintf("SELECT name, genre, data FROM %s", actortable)
+        if err := r.db.Select(&amp;actors, query); err != nil </span><span class="cov0" title="0">{
+                return []models.ActorSelect{}, err
+        }</span>
+        <span class="cov8" title="1">for _, acr := range actors </span><span class="cov8" title="1">{
+                var cinemas []string
+                query2 := fmt.Sprintf("SELECT name FROM %s c INNER JOIN %s ac ON ac.cinema_id = c.id WHERE ac.actor_id = $1", cinematable, authorcinema)
+                if err := r.db.Select(&amp;cinemas, query2, acr.Id); err != nil </span><span class="cov8" title="1">{
+                        return []models.ActorSelect{}, err
+                }</span>
+                <span class="cov0" title="0">result = append(result, models.ActorSelect{Id: acr.Id, Name: acr.Name, Genre: acr.Genre, Data: acr.Data, Cinemas: cinemas})</span>
+        }
+
+        <span class="cov0" title="0">return result, nil</span>
+}
+
+func (r *Actor_Repo) InsertActor(actor models.Actor) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("INSERT INTO %s(name, genre, data) VALUES($1, $2, $3) RETURNING id", actortable)
+        row := r.db.QueryRow(query, actor.Name, actor.Genre, actor.Data)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return id, nil</span>
+}
+
+func (r *Actor_Repo) UpdateActor(id int, actor models.ActorUpdate) error <span class="cov0" title="0">{
+        args := make([]interface{}, 0)
+        setVal := make([]string, 0)
+        argid := 1
+        if actor.Genre != nil </span><span class="cov0" title="0">{
+                args = append(args, *actor.Genre)
+                setVal = append(setVal, fmt.Sprintf("genre=$%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">if actor.Name != nil </span><span class="cov0" title="0">{
+                args = append(args, *actor.Name)
+                setVal = append(setVal, fmt.Sprintf("name=$%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">if actor.Data != nil </span><span class="cov0" title="0">{
+                args = append(args, *actor.Data)
+                setVal = append(setVal, fmt.Sprintf("data=$%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">setQuery := strings.Join(setVal, ",")
+        query := fmt.Sprintf("UPDATE %s SET %s WHERE id = $%d", actortable, setQuery, argid)
+        args = append(args, id)
+        _, err := r.db.Exec(query, args...)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *Actor_Repo) FindIdCinemaByName(cin string) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("SELECT id FROm %s WHERE name = $1", cinematable)
+        row := r.db.QueryRow(query, cin)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return id, nil</span>
+}
+
+func (r *Actor_Repo) DeleteActor(id string) error <span class="cov8" title="1">{
+        query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", actortable)
+        query2 := fmt.Sprintf("DELETE FROM %s WHERE actor_id = $1", authorcinema)
+        _, err := r.db.Exec(query2, id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">_, err = r.db.Exec(query, id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package repository
+
+import (
+        "fmt"
+
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/jmoiron/sqlx"
+)
+
+type Auth_Repo struct {
+        db *sqlx.DB
+}
+
+func NewAuthRepo(db *sqlx.DB) *Auth_Repo <span class="cov8" title="1">{
+        return &amp;Auth_Repo{db: db}
+}</span>
+
+func (r *Auth_Repo) SignUp(User models.User) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("INSERT INTO %s(username, password) VALUES($1, $2) RETURNING ID", usertable)
+        row := r.db.QueryRow(query, User.Username, User.Password)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return id, nil</span>
+}
+
+func (r *Auth_Repo) SignIn(User models.User) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("SELECT id FROM %s WHERE username = $1 AND password = $2", usertable)
+        row := r.db.QueryRow(query, User.Username, User.Password)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return id, nil</span>
+}
+
+func (r *Auth_Repo) SignUpAdmin(Admin models.Admin) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("INSERT INTO %s(username, password) VALUES ($1, $2) RETURNING id", admintable)
+        row := r.db.QueryRow(query, Admin.Username, Admin.Password)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return id, nil</span>
+}
+
+func (r *Auth_Repo) SignInAdmin(Admin models.Admin) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("SELECT id FROM %s WHERE username = $1 AND password = $2", admintable)
+        row := r.db.QueryRow(query, Admin.Username, Admin.Password)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return id, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package repository
+
+import (
+        "fmt"
+        "strings"
+
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/jmoiron/sqlx"
+)
+
+type Cinema_Repo struct {
+        db *sqlx.DB
+}
+
+func NewCinemaRepo(db *sqlx.DB) *Cinema_Repo <span class="cov8" title="1">{
+        return &amp;Cinema_Repo{db: db}
+}</span>
+
+func (r *Cinema_Repo) InsertCinema(cinema models.Cinema) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("INSERT INTO %s(name, description, data, rating) VALUES($1,$2,$3,$4) RETURNING ID", cinematable)
+        row := r.db.QueryRow(query, cinema.Name, cinema.Description, cinema.Data, cinema.Rating)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">for _, acr := range cinema.Actors </span><span class="cov0" title="0">{
+                fmt.Println(acr)
+                idacr, err := r.GetIdActorByName(acr)
+                if err != nil </span><span class="cov0" title="0">{
+                        return 0, err
+                }</span>
+                <span class="cov0" title="0">query2 := fmt.Sprintf("INSERT INTO %s(actor_id, cinema_id) VALUES($1, $2)", authorcinema)
+                _, err = r.db.Exec(query2, idacr, id)
+                if err != nil </span><span class="cov0" title="0">{
+                        return 0, err
+                }</span>
+        }
+        <span class="cov8" title="1">return id, nil</span>
+}
+
+func (r *Cinema_Repo) GetIdActorByName(name string) (int, error) <span class="cov8" title="1">{
+        var id int
+        query := fmt.Sprintf("SELECT id FROM %s WHERE name = $1", actortable)
+        row := r.db.QueryRow(query, name)
+        if err := row.Scan(&amp;id); err != nil </span><span class="cov8" title="1">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return id, nil</span>
+}
+
+func (r *Cinema_Repo) UpdateFilm(id string, cinema models.CinemaUpdate) error <span class="cov0" title="0">{
+        b := "0"
+        args := make([]interface{}, 0)
+        setVal := make([]string, 0)
+        argid := 1
+        if cinema.Data != &amp;b </span><span class="cov0" title="0">{
+                args = append(args, *cinema.Data)
+                setVal = append(setVal, fmt.Sprintf("data = $%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">if cinema.Name != nil </span><span class="cov0" title="0">{
+                args = append(args, *cinema.Name)
+                setVal = append(setVal, fmt.Sprintf("name=$%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">if cinema.Description != nil </span><span class="cov0" title="0">{
+                args = append(args, *cinema.Description)
+                setVal = append(setVal, fmt.Sprintf("description=$%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">if cinema.Rating != nil </span><span class="cov0" title="0">{
+                args = append(args, *cinema.Rating)
+                setVal = append(setVal, fmt.Sprintf("rating=$%d", argid))
+                argid++
+        }</span>
+        <span class="cov0" title="0">setQuery := strings.Join(setVal, ",")
+        query := fmt.Sprintf("UPDATE %s SET %s WHERE id = $%d", cinematable, setQuery, argid)
+        args = append(args, argid)
+        _, err := r.db.Exec(query, args...)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">if cinema.Actors != nil </span><span class="cov0" title="0">{
+                for _, act := range *cinema.Actors </span><span class="cov0" title="0">{
+                        idact, err := r.GetIdActorByName(act)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return err
+                        }</span>
+                        <span class="cov0" title="0">query2 := fmt.Sprintf("INSERT INTO %s(actor_id, cinema_id) VALUES($1, $2)", authorcinema)
+                        _, err = r.db.Exec(query2, idact, id)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return err
+                        }</span>
+                }
+        }
+        <span class="cov0" title="0">return nil</span>
+
+}
+
+func (r *Cinema_Repo) DeleteFilm(id string) error <span class="cov8" title="1">{
+        query2 := fmt.Sprintf("DELETE FROM %s WHERE cinema_id = $1", authorcinema)
+        query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", cinematable)
+        _, err := r.db.Exec(query2, id)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">_, err = r.db.Exec(query, id)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (r *Cinema_Repo) GetCinemas(sor string) ([]models.Cinema, error) <span class="cov8" title="1">{
+        var result []models.Cinema
+        var cinemas []models.Cinema
+        query := fmt.Sprintf("SELECT id, name, description, data, rating FROM %s", cinematable)
+        if err := r.db.Select(&amp;cinemas, query); err != nil </span><span class="cov0" title="0">{
+                return []models.Cinema{}, err
+        }</span>
+        <span class="cov8" title="1">for _, val := range cinemas </span><span class="cov8" title="1">{
+                var rs []string
+                id := val.Id
+                query := fmt.Sprintf("SELECT name FROM %s a INNER JOIN %s ca ON a.id = ca.actor_id WHERE ca.cinema_id = $1", actortable, authorcinema)
+                if err := r.db.Select(&amp;rs, query, id); err != nil </span><span class="cov8" title="1">{
+                        return []models.Cinema{}, nil
+                }</span>
+                <span class="cov0" title="0">result = append(result, models.Cinema{
+                        Id:          val.Id,
+                        Name:        val.Name,
+                        Description: val.Description,
+                        Data:        val.Data,
+                        Rating:      val.Rating,
+                        Actors:      rs,
+                })</span>
+        }
+        <span class="cov0" title="0">return result, nil</span>
+}
+
+func (r *Cinema_Repo) Search(search models.Search) ([]models.Cinema, []models.Cinema, error) <span class="cov0" title="0">{
+        var cinemas1 []models.Cinema
+        var cinemas2 []models.Cinema
+        str := "%" + search.Search + "%"
+        query1 := fmt.Sprintf("SELECT id, name, description, data, rating FROM %s WHERE name LIKE('%s')", cinematable, str)
+        query2 := fmt.Sprintf(`select c.id, c.name, c.description, c.data, c.rating from %s c 
+        inner join %s ac on c.id = ac.cinema_id 
+        inner join %s a on a.id = ac.actor_id where a.name LIKE('%s')`, cinematable, authorcinema, actortable, str)
+        if err := r.db.Select(&amp;cinemas1, query1); err != nil </span><span class="cov0" title="0">{
+                return []models.Cinema{}, []models.Cinema{}, err
+        }</span>
+        <span class="cov0" title="0">if err := r.db.Select(&amp;cinemas2, query2); err != nil </span><span class="cov0" title="0">{
+                return []models.Cinema{}, []models.Cinema{}, err
+        }</span>
+        <span class="cov0" title="0">return cinemas1, cinemas2, nil</span>
+
+}
+
+func (r *Cinema_Repo) Unification(hash map[string]int) ([]models.Cinema, error) <span class="cov0" title="0">{
+        result := make([]models.Cinema, 0)
+        var result2 []models.Cinema
+        for key := range hash </span><span class="cov0" title="0">{
+                var mod []models.Cinema
+                query := fmt.Sprintf("SELECT id, name, description, data, rating FROM %s WHERE name = $1", cinematable)
+                if err := r.db.Select(&amp;mod, query, key); err != nil </span><span class="cov0" title="0">{
+                        return []models.Cinema{}, err
+                }</span>
+                <span class="cov0" title="0">result = append(result, mod...)</span>
+        }
+        <span class="cov0" title="0">for _, val := range result </span><span class="cov0" title="0">{
+                var names []string
+                query := fmt.Sprintf("SELECT name FROM %s a INNER JOIN %s ca ON ca.actor_id = a.id WHERE ca.cinema_id = $1", actortable, authorcinema)
+                if err := r.db.Select(&amp;names, query, val.Id); err != nil </span><span class="cov0" title="0">{
+                        return []models.Cinema{}, err
+                }</span>
+                <span class="cov0" title="0">result2 = append(result2, models.Cinema{
+                        Id:          val.Id,
+                        Name:        val.Name,
+                        Description: val.Description,
+                        Data:        val.Data,
+                        Rating:      val.Rating,
+                        Actors:      names,
+                })</span>
+        }
+
+        <span class="cov0" title="0">return result2, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: repository.go
+
+// Package mock_repository is a generated GoMock package.
+package mock_repository
+
+import (
+        reflect "reflect"
+
+        models "github.com/Futturi/vktest/internal/models"
+        gomock "github.com/golang/mock/gomock"
+)
+
+// MockAuthorization is a mock of Authorization interface.
+type MockAuthorization struct {
+        ctrl     *gomock.Controller
+        recorder *MockAuthorizationMockRecorder
+}
+
+// MockAuthorizationMockRecorder is the mock recorder for MockAuthorization.
+type MockAuthorizationMockRecorder struct {
+        mock *MockAuthorization
+}
+
+// NewMockAuthorization creates a new mock instance.
+func NewMockAuthorization(ctrl *gomock.Controller) *MockAuthorization <span class="cov8" title="1">{
+        mock := &amp;MockAuthorization{ctrl: ctrl}
+        mock.recorder = &amp;MockAuthorizationMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAuthorization) EXPECT() *MockAuthorizationMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// SignIn mocks base method.
+func (m *MockAuthorization) SignIn(User models.User) (int, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignIn", User)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignIn indicates an expected call of SignIn.
+func (mr *MockAuthorizationMockRecorder) SignIn(User interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockAuthorization)(nil).SignIn), User)
+}</span>
+
+// SignInAdmin mocks base method.
+func (m *MockAuthorization) SignInAdmin(Admin models.Admin) (int, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignInAdmin", Admin)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignInAdmin indicates an expected call of SignInAdmin.
+func (mr *MockAuthorizationMockRecorder) SignInAdmin(Admin interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignInAdmin", reflect.TypeOf((*MockAuthorization)(nil).SignInAdmin), Admin)
+}</span>
+
+// SignUp mocks base method.
+func (m *MockAuthorization) SignUp(User models.User) (int, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignUp", User)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignUp indicates an expected call of SignUp.
+func (mr *MockAuthorizationMockRecorder) SignUp(User interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockAuthorization)(nil).SignUp), User)
+}</span>
+
+// SignUpAdmin mocks base method.
+func (m *MockAuthorization) SignUpAdmin(Admin models.Admin) (int, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignUpAdmin", Admin)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignUpAdmin indicates an expected call of SignUpAdmin.
+func (mr *MockAuthorizationMockRecorder) SignUpAdmin(Admin interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUpAdmin", reflect.TypeOf((*MockAuthorization)(nil).SignUpAdmin), Admin)
+}</span>
+
+// MockActorRepo is a mock of ActorRepo interface.
+type MockActorRepo struct {
+        ctrl     *gomock.Controller
+        recorder *MockActorRepoMockRecorder
+}
+
+// MockActorRepoMockRecorder is the mock recorder for MockActorRepo.
+type MockActorRepoMockRecorder struct {
+        mock *MockActorRepo
+}
+
+// NewMockActorRepo creates a new mock instance.
+func NewMockActorRepo(ctrl *gomock.Controller) *MockActorRepo <span class="cov8" title="1">{
+        mock := &amp;MockActorRepo{ctrl: ctrl}
+        mock.recorder = &amp;MockActorRepoMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockActorRepo) EXPECT() *MockActorRepoMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// DeleteActor mocks base method.
+func (m *MockActorRepo) DeleteActor(id string) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteActor", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteActor indicates an expected call of DeleteActor.
+func (mr *MockActorRepoMockRecorder) DeleteActor(id interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteActor", reflect.TypeOf((*MockActorRepo)(nil).DeleteActor), id)
+}</span>
+
+// GetActors mocks base method.
+func (m *MockActorRepo) GetActors() ([]models.ActorSelect, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetActors")
+        ret0, _ := ret[0].([]models.ActorSelect)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetActors indicates an expected call of GetActors.
+func (mr *MockActorRepoMockRecorder) GetActors() *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActors", reflect.TypeOf((*MockActorRepo)(nil).GetActors))
+}</span>
+
+// InsertActor mocks base method.
+func (m *MockActorRepo) InsertActor(actor models.Actor) (int, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "InsertActor", actor)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// InsertActor indicates an expected call of InsertActor.
+func (mr *MockActorRepoMockRecorder) InsertActor(actor interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertActor", reflect.TypeOf((*MockActorRepo)(nil).InsertActor), actor)
+}</span>
+
+// UpdateActor mocks base method.
+func (m *MockActorRepo) UpdateActor(id int, actor models.ActorUpdate) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateActor", id, actor)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// UpdateActor indicates an expected call of UpdateActor.
+func (mr *MockActorRepoMockRecorder) UpdateActor(id, actor interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateActor", reflect.TypeOf((*MockActorRepo)(nil).UpdateActor), id, actor)
+}</span>
+
+// MockCinemaRepo is a mock of CinemaRepo interface.
+type MockCinemaRepo struct {
+        ctrl     *gomock.Controller
+        recorder *MockCinemaRepoMockRecorder
+}
+
+// MockCinemaRepoMockRecorder is the mock recorder for MockCinemaRepo.
+type MockCinemaRepoMockRecorder struct {
+        mock *MockCinemaRepo
+}
+
+// NewMockCinemaRepo creates a new mock instance.
+func NewMockCinemaRepo(ctrl *gomock.Controller) *MockCinemaRepo <span class="cov8" title="1">{
+        mock := &amp;MockCinemaRepo{ctrl: ctrl}
+        mock.recorder = &amp;MockCinemaRepoMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCinemaRepo) EXPECT() *MockCinemaRepoMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// DeleteFilm mocks base method.
+func (m *MockCinemaRepo) DeleteFilm(id string) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteFilm", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteFilm indicates an expected call of DeleteFilm.
+func (mr *MockCinemaRepoMockRecorder) DeleteFilm(id interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFilm", reflect.TypeOf((*MockCinemaRepo)(nil).DeleteFilm), id)
+}</span>
+
+// GetCinemas mocks base method.
+func (m *MockCinemaRepo) GetCinemas(sor string) ([]models.Cinema, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetCinemas", sor)
+        ret0, _ := ret[0].([]models.Cinema)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetCinemas indicates an expected call of GetCinemas.
+func (mr *MockCinemaRepoMockRecorder) GetCinemas(sor interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCinemas", reflect.TypeOf((*MockCinemaRepo)(nil).GetCinemas), sor)
+}</span>
+
+// InsertCinema mocks base method.
+func (m *MockCinemaRepo) InsertCinema(cinema models.Cinema) (int, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "InsertCinema", cinema)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// InsertCinema indicates an expected call of InsertCinema.
+func (mr *MockCinemaRepoMockRecorder) InsertCinema(cinema interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertCinema", reflect.TypeOf((*MockCinemaRepo)(nil).InsertCinema), cinema)
+}</span>
+
+// Search mocks base method.
+func (m *MockCinemaRepo) Search(search models.Search) ([]models.Cinema, []models.Cinema, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Search", search)
+        ret0, _ := ret[0].([]models.Cinema)
+        ret1, _ := ret[1].([]models.Cinema)
+        ret2, _ := ret[2].(error)
+        return ret0, ret1, ret2
+}</span>
+
+// Search indicates an expected call of Search.
+func (mr *MockCinemaRepoMockRecorder) Search(search interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockCinemaRepo)(nil).Search), search)
+}</span>
+
+// Unification mocks base method.
+func (m *MockCinemaRepo) Unification(hash map[string]int) ([]models.Cinema, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Unification", hash)
+        ret0, _ := ret[0].([]models.Cinema)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Unification indicates an expected call of Unification.
+func (mr *MockCinemaRepoMockRecorder) Unification(hash interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unification", reflect.TypeOf((*MockCinemaRepo)(nil).Unification), hash)
+}</span>
+
+// UpdateFilm mocks base method.
+func (m *MockCinemaRepo) UpdateFilm(id string, cinema models.CinemaUpdate) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateFilm", id, cinema)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// UpdateFilm indicates an expected call of UpdateFilm.
+func (mr *MockCinemaRepoMockRecorder) UpdateFilm(id, cinema interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateFilm", reflect.TypeOf((*MockCinemaRepo)(nil).UpdateFilm), id, cinema)
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package repository
+
+import (
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/jmoiron/sqlx"
+)
+
+const (
+        usertable    = "users"
+        cinematable  = "cinema"
+        authorcinema = "author_cinema"
+        actortable   = "actor"
+        admintable   = "admins"
+)
+
+//go:generate mockgen -source=repository.go -destination=mocksr/mockr.go
+type Authorization interface {
+        SignUp(User models.User) (int, error)
+        SignIn(User models.User) (int, error)
+        SignUpAdmin(Admin models.Admin) (int, error)
+        SignInAdmin(Admin models.Admin) (int, error)
+}
+
+type ActorRepo interface {
+        GetActors() ([]models.ActorSelect, error)
+        InsertActor(actor models.Actor) (int, error)
+        UpdateActor(id int, actor models.ActorUpdate) error
+        DeleteActor(id string) error
+}
+
+type CinemaRepo interface {
+        InsertCinema(cinema models.Cinema) (int, error)
+        UpdateFilm(id string, cinema models.CinemaUpdate) error
+        DeleteFilm(id string) error
+        GetCinemas(sor string) ([]models.Cinema, error)
+        Search(search models.Search) ([]models.Cinema, []models.Cinema, error)
+        Unification(hash map[string]int) ([]models.Cinema, error)
+}
+
+type Repository struct {
+        Authorization
+        ActorRepo
+        CinemaRepo
+}
+
+func NewRepostitory(db *sqlx.DB) *Repository <span class="cov8" title="1">{
+        return &amp;Repository{Authorization: NewAuthRepo(db),
+                ActorRepo:  NewActorRepo(db),
+                CinemaRepo: NewCinemaRepo(db)}
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package server
+
+import (
+        "context"
+        "net/http"
+        "time"
+)
+
+type Server struct {
+        Server *http.Server
+}
+
+func (s *Server) InitServer(port string, handler http.Handler) error <span class="cov0" title="0">{
+        s.Server = &amp;http.Server{
+                Addr:         ":" + port,
+                Handler:      handler,
+                WriteTimeout: 10 * time.Second,
+                ReadTimeout:  10 * time.Second,
+        }
+        return s.Server.ListenAndServe()
+}</span>
+
+func (s *Server) ShutDown(ctx context.Context) error <span class="cov0" title="0">{
+        return s.Server.Shutdown(ctx)
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package service
+
+import (
+        "fmt"
+        "strconv"
+        "time"
+
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/Futturi/vktest/internal/repository"
+)
+
+type Actor_Service struct {
+        repo repository.ActorRepo
+}
+
+func NewActorService(repo repository.ActorRepo) *Actor_Service <span class="cov8" title="1">{
+        return &amp;Actor_Service{repo: repo}
+}</span>
+
+func (a *Actor_Service) GetActors() ([]models.ActorSelect, error) <span class="cov8" title="1">{
+        var result []models.ActorSelect
+        actors, err := a.repo.GetActors()
+        if err != nil </span><span class="cov0" title="0">{
+                return []models.ActorSelect{}, err
+        }</span>
+        <span class="cov8" title="1">for _, acr := range actors </span><span class="cov0" title="0">{
+                var b string
+                i, err := strconv.ParseInt(acr.Data, 10, 64)
+                if err != nil </span><span class="cov0" title="0">{
+                        return []models.ActorSelect{}, err
+                }</span>
+                <span class="cov0" title="0">tm := time.Unix(i, 0)
+                b = tm.Format("2006-Jan-02")
+                result = append(result, models.ActorSelect{Id: acr.Id, Name: acr.Name, Genre: acr.Genre, Data: b, Cinemas: acr.Cinemas})</span>
+        }
+        <span class="cov8" title="1">return result, nil</span>
+}
+func (a *Actor_Service) InsertActor(actor models.Actor) (int, error) <span class="cov8" title="1">{
+        data, err := time.Parse("2006-Jan-02", actor.Data)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">actor.Data = fmt.Sprintf("%d", data.Unix())
+        return a.repo.InsertActor(actor)</span>
+}
+
+func (a *Actor_Service) UpdateActor(id int, actor models.ActorUpdate) error <span class="cov8" title="1">{
+        if actor.Data != nil </span><span class="cov0" title="0">{
+                data, err := time.Parse("2006-Jan-02", *actor.Data)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov0" title="0">t := fmt.Sprintf("%d", data.Unix())
+                actor.Data = &amp;t</span>
+        }
+        <span class="cov8" title="1">return a.repo.UpdateActor(id, actor)</span>
+}
+
+func (a *Actor_Service) DeleteActor(id string) error <span class="cov8" title="1">{
+        return a.repo.DeleteActor(id)
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package service
+
+import (
+        "errors"
+        "fmt"
+        "time"
+
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/Futturi/vktest/internal/repository"
+        "github.com/Futturi/vktest/internal/utils"
+        "github.com/golang-jwt/jwt"
+)
+
+const (
+        jwtkey = "erwiughoweijfrpqiwjbnqhioqeuhghowqop[ew[slcnbtisdkcngueklalx]]"
+)
+
+type Auth_Service struct {
+        repo repository.Authorization
+}
+
+func NewAuthService(repo repository.Authorization) *Auth_Service <span class="cov8" title="1">{
+        return &amp;Auth_Service{repo: repo}
+}</span>
+
+func (a *Auth_Service) SignUp(User models.User) (int, error) <span class="cov0" title="0">{
+        user := models.User{Id: User.Id, Username: User.Username, Password: utils.HashPass(User.Password)}
+        return a.repo.SignUp(user)
+}</span>
+
+type Claims struct {
+        Id      int `json:"id"`
+        IsAdmin bool
+        jwt.StandardClaims
+}
+
+func (a *Auth_Service) SignIn(User models.User) (string, error) <span class="cov0" title="0">{
+        user := models.User{Username: User.Username, Password: utils.HashPass(User.Password)}
+        id, err := a.repo.SignIn(user)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov0" title="0">claims := Claims{id, false, jwt.StandardClaims{
+                ExpiresAt: time.Now().Add(30 * time.Minute).Unix(),
+                IssuedAt:  time.Now().Unix(),
+        }}
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString([]byte(jwtkey))</span>
+}
+
+func (a *Auth_Service) ParseToken(header string) (string, bool, error) <span class="cov0" title="0">{
+        token, err := jwt.ParseWithClaims(header, &amp;Claims{}, func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
+                        return 0, errors.New("invalid signing method")
+                }</span>
+                <span class="cov0" title="0">return []byte(jwtkey), nil</span>
+        })
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return "", false, err
+        }</span>
+        <span class="cov0" title="0">Claims, ok := token.Claims.(*Claims)
+        if !ok </span><span class="cov0" title="0">{
+                return "", false, errors.New("token claims are not of type *tokenClaims")
+        }</span>
+        <span class="cov0" title="0">return fmt.Sprintf("%d", Claims.Id), Claims.IsAdmin, nil</span>
+}
+
+func (a *Auth_Service) SignUpAdmin(Admin models.Admin) (int, error) <span class="cov0" title="0">{
+        admin := models.Admin{Username: Admin.Username, Password: utils.HashPass(Admin.Password)}
+        return a.repo.SignUpAdmin(admin)
+}</span>
+
+func (a *Auth_Service) SignInAdmin(Admin models.Admin) (string, error) <span class="cov0" title="0">{
+        admin := models.Admin{Username: Admin.Username, Password: utils.HashPass(Admin.Password)}
+        id, err := a.repo.SignInAdmin(admin)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov0" title="0">claims := Claims{id, true, jwt.StandardClaims{
+                ExpiresAt: time.Now().Add(60 * time.Minute).Unix(),
+                IssuedAt:  time.Now().Unix(),
+        }}
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString([]byte(jwtkey))</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package service
+
+import (
+        "errors"
+        "fmt"
+        "slices"
+        "strconv"
+        "time"
+
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/Futturi/vktest/internal/repository"
+)
+
+type Cinema_Service struct {
+        repo repository.CinemaRepo
+}
+
+func NewCinemaService(repo repository.CinemaRepo) *Cinema_Service <span class="cov8" title="1">{
+        return &amp;Cinema_Service{repo: repo}
+}</span>
+
+func (a *Cinema_Service) InsertCinema(cinema models.Cinema) (int, error) <span class="cov8" title="1">{
+        if cinema.Data != "" </span><span class="cov8" title="1">{
+                data, err := time.Parse("2006-Jan-02", cinema.Data)
+                if err != nil </span><span class="cov0" title="0">{
+                        return 0, err
+                }</span>
+                <span class="cov8" title="1">cinema.Data = fmt.Sprintf("%d", data.Unix())</span>
+        }
+        <span class="cov8" title="1">if cinema.Data == "" </span><span class="cov0" title="0">{
+                cinema.Data = "0"
+        }</span>
+        <span class="cov8" title="1">if len(cinema.Name) &gt; 150 </span><span class="cov8" title="1">{
+                return 0, errors.New("your name is longer than 150")
+        }</span>
+        <span class="cov8" title="1">if len(cinema.Description) &gt; 1000 </span><span class="cov0" title="0">{
+                return 0, errors.New("your description is longer than 1000")
+        }</span>
+        <span class="cov8" title="1">if cinema.Rating &gt; 10 || cinema.Rating &lt; 0 </span><span class="cov8" title="1">{
+                return 0, errors.New("incorrect rating")
+        }</span>
+        <span class="cov8" title="1">return a.repo.InsertCinema(cinema)</span>
+}
+
+func (a *Cinema_Service) UpdateFilm(id string, cinema models.CinemaUpdate) error <span class="cov8" title="1">{
+        if cinema.Data != nil </span><span class="cov0" title="0">{
+                data, err := time.Parse("2006-Jan-02", *cinema.Data)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov0" title="0">t := fmt.Sprintf("%d", data.Unix())
+                cinema.Data = &amp;t</span>
+        }
+        <span class="cov8" title="1">if cinema.Data == nil </span><span class="cov8" title="1">{
+                a := "0"
+                cinema.Data = &amp;a
+        }</span>
+        <span class="cov8" title="1">if len(*cinema.Name) &gt; 150 </span><span class="cov0" title="0">{
+                return errors.New("your name is longer than 150")
+        }</span>
+        <span class="cov8" title="1">if len(*cinema.Description) &gt; 1000 </span><span class="cov0" title="0">{
+                return errors.New("your description is longer than 1000")
+        }</span>
+        <span class="cov8" title="1">if *cinema.Rating &gt; 10 || *cinema.Rating &lt; 0 </span><span class="cov0" title="0">{
+                return errors.New("incorrect rating")
+        }</span>
+        <span class="cov8" title="1">return a.repo.UpdateFilm(id, cinema)</span>
+}
+
+func (a *Cinema_Service) DeleteFilm(id string) error <span class="cov8" title="1">{
+        return a.repo.DeleteFilm(id)
+}</span>
+
+func (a *Cinema_Service) GetCinemas(sor string) ([]models.Cinema, error) <span class="cov8" title="1">{
+        var result []models.Cinema
+        cinemas, err := a.repo.GetCinemas(sor)
+        if err != nil </span><span class="cov0" title="0">{
+                return []models.Cinema{}, err
+        }</span>
+        <span class="cov8" title="1">if sor == "rating" </span><span class="cov8" title="1">{
+                slices.SortFunc(cinemas, func(a, b models.Cinema) int </span><span class="cov0" title="0">{
+                        switch a.Rating &gt; b.Rating </span>{
+                        case true:<span class="cov0" title="0">
+                                return -1</span>
+                        case false:<span class="cov0" title="0">
+                                return 1</span>
+                        default:<span class="cov0" title="0">
+                                return 0</span>
+                        }
+                })
+        }
+        <span class="cov8" title="1">if sor == "name" </span><span class="cov8" title="1">{
+                slices.SortFunc(cinemas, func(a, b models.Cinema) int </span><span class="cov0" title="0">{
+                        switch a.Name &gt; b.Name </span>{
+                        case true:<span class="cov0" title="0">
+                                return -1</span>
+                        case false:<span class="cov0" title="0">
+                                return 1</span>
+                        default:<span class="cov0" title="0">
+                                return 0</span>
+                        }
+                })
+        }
+        <span class="cov8" title="1">if sor == "date" </span><span class="cov8" title="1">{
+                slices.SortFunc(cinemas, func(a, b models.Cinema) int </span><span class="cov0" title="0">{
+                        data1, err := strconv.Atoi(a.Data)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return 0
+                        }</span>
+                        <span class="cov0" title="0">data2, err := strconv.Atoi(b.Data)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return 0
+                        }</span>
+                        <span class="cov0" title="0">switch data1 &gt; data2 </span>{
+                        case true:<span class="cov0" title="0">
+                                return -1</span>
+                        case false:<span class="cov0" title="0">
+                                return 1</span>
+                        default:<span class="cov0" title="0">
+                                return 0</span>
+                        }
+                })
+        }
+        <span class="cov8" title="1">for _, cin := range cinemas </span><span class="cov0" title="0">{
+                var b string
+                i, err := strconv.ParseInt(cin.Data, 10, 64)
+                if err != nil </span><span class="cov0" title="0">{
+                        return []models.Cinema{}, err
+                }</span>
+                <span class="cov0" title="0">tm := time.Unix(i, 0)
+                b = tm.Format("2006-Jan-02")
+                result = append(result, models.Cinema{
+                        Id:          cin.Id,
+                        Name:        cin.Name,
+                        Description: cin.Description,
+                        Data:        b,
+                        Rating:      cin.Rating,
+                        Actors:      cin.Actors,
+                })</span>
+        }
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (a *Cinema_Service) Search(search models.Search) ([]models.Cinema, error) <span class="cov0" title="0">{
+        hash := make(map[string]int, 0)
+        cinemas1, cinemas2, err := a.repo.Search(search)
+        if err != nil </span><span class="cov0" title="0">{
+                return []models.Cinema{}, err
+        }</span>
+        <span class="cov0" title="0">for _, val := range cinemas1 </span><span class="cov0" title="0">{
+                hash[val.Name]++
+        }</span>
+        <span class="cov0" title="0">for _, val := range cinemas2 </span><span class="cov0" title="0">{
+                hash[val.Name]++
+        }</span>
+        <span class="cov0" title="0">return a.repo.Unification(hash)</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: service.go
+
+// Package mock_service is a generated GoMock package.
+package mock_service
+
+import (
+        reflect "reflect"
+
+        models "github.com/Futturi/vktest/internal/models"
+        gomock "github.com/golang/mock/gomock"
+)
+
+// MockAuthService is a mock of AuthService interface.
+type MockAuthService struct {
+        ctrl     *gomock.Controller
+        recorder *MockAuthServiceMockRecorder
+}
+
+// MockAuthServiceMockRecorder is the mock recorder for MockAuthService.
+type MockAuthServiceMockRecorder struct {
+        mock *MockAuthService
+}
+
+// NewMockAuthService creates a new mock instance.
+func NewMockAuthService(ctrl *gomock.Controller) *MockAuthService <span class="cov8" title="1">{
+        mock := &amp;MockAuthService{ctrl: ctrl}
+        mock.recorder = &amp;MockAuthServiceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAuthService) EXPECT() *MockAuthServiceMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// ParseToken mocks base method.
+func (m *MockAuthService) ParseToken(token string) (string, bool, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ParseToken", token)
+        ret0, _ := ret[0].(string)
+        ret1, _ := ret[1].(bool)
+        ret2, _ := ret[2].(error)
+        return ret0, ret1, ret2
+}</span>
+
+// ParseToken indicates an expected call of ParseToken.
+func (mr *MockAuthServiceMockRecorder) ParseToken(token interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockAuthService)(nil).ParseToken), token)
+}</span>
+
+// SignIn mocks base method.
+func (m *MockAuthService) SignIn(User models.User) (string, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignIn", User)
+        ret0, _ := ret[0].(string)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignIn indicates an expected call of SignIn.
+func (mr *MockAuthServiceMockRecorder) SignIn(User interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockAuthService)(nil).SignIn), User)
+}</span>
+
+// SignInAdmin mocks base method.
+func (m *MockAuthService) SignInAdmin(Admin models.Admin) (string, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignInAdmin", Admin)
+        ret0, _ := ret[0].(string)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignInAdmin indicates an expected call of SignInAdmin.
+func (mr *MockAuthServiceMockRecorder) SignInAdmin(Admin interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignInAdmin", reflect.TypeOf((*MockAuthService)(nil).SignInAdmin), Admin)
+}</span>
+
+// SignUp mocks base method.
+func (m *MockAuthService) SignUp(User models.User) (int, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignUp", User)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignUp indicates an expected call of SignUp.
+func (mr *MockAuthServiceMockRecorder) SignUp(User interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockAuthService)(nil).SignUp), User)
+}</span>
+
+// SignUpAdmin mocks base method.
+func (m *MockAuthService) SignUpAdmin(Admin models.Admin) (int, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SignUpAdmin", Admin)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SignUpAdmin indicates an expected call of SignUpAdmin.
+func (mr *MockAuthServiceMockRecorder) SignUpAdmin(Admin interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUpAdmin", reflect.TypeOf((*MockAuthService)(nil).SignUpAdmin), Admin)
+}</span>
+
+// MockActorService is a mock of ActorService interface.
+type MockActorService struct {
+        ctrl     *gomock.Controller
+        recorder *MockActorServiceMockRecorder
+}
+
+// MockActorServiceMockRecorder is the mock recorder for MockActorService.
+type MockActorServiceMockRecorder struct {
+        mock *MockActorService
+}
+
+// NewMockActorService creates a new mock instance.
+func NewMockActorService(ctrl *gomock.Controller) *MockActorService <span class="cov8" title="1">{
+        mock := &amp;MockActorService{ctrl: ctrl}
+        mock.recorder = &amp;MockActorServiceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockActorService) EXPECT() *MockActorServiceMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// DeleteActor mocks base method.
+func (m *MockActorService) DeleteActor(id string) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteActor", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteActor indicates an expected call of DeleteActor.
+func (mr *MockActorServiceMockRecorder) DeleteActor(id interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteActor", reflect.TypeOf((*MockActorService)(nil).DeleteActor), id)
+}</span>
+
+// GetActors mocks base method.
+func (m *MockActorService) GetActors() ([]models.ActorSelect, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetActors")
+        ret0, _ := ret[0].([]models.ActorSelect)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetActors indicates an expected call of GetActors.
+func (mr *MockActorServiceMockRecorder) GetActors() *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActors", reflect.TypeOf((*MockActorService)(nil).GetActors))
+}</span>
+
+// InsertActor mocks base method.
+func (m *MockActorService) InsertActor(actor models.Actor) (int, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "InsertActor", actor)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// InsertActor indicates an expected call of InsertActor.
+func (mr *MockActorServiceMockRecorder) InsertActor(actor interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertActor", reflect.TypeOf((*MockActorService)(nil).InsertActor), actor)
+}</span>
+
+// UpdateActor mocks base method.
+func (m *MockActorService) UpdateActor(id int, actor models.ActorUpdate) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateActor", id, actor)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// UpdateActor indicates an expected call of UpdateActor.
+func (mr *MockActorServiceMockRecorder) UpdateActor(id, actor interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateActor", reflect.TypeOf((*MockActorService)(nil).UpdateActor), id, actor)
+}</span>
+
+// MockCinemaService is a mock of CinemaService interface.
+type MockCinemaService struct {
+        ctrl     *gomock.Controller
+        recorder *MockCinemaServiceMockRecorder
+}
+
+// MockCinemaServiceMockRecorder is the mock recorder for MockCinemaService.
+type MockCinemaServiceMockRecorder struct {
+        mock *MockCinemaService
+}
+
+// NewMockCinemaService creates a new mock instance.
+func NewMockCinemaService(ctrl *gomock.Controller) *MockCinemaService <span class="cov8" title="1">{
+        mock := &amp;MockCinemaService{ctrl: ctrl}
+        mock.recorder = &amp;MockCinemaServiceMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCinemaService) EXPECT() *MockCinemaServiceMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// DeleteFilm mocks base method.
+func (m *MockCinemaService) DeleteFilm(id string) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "DeleteFilm", id)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// DeleteFilm indicates an expected call of DeleteFilm.
+func (mr *MockCinemaServiceMockRecorder) DeleteFilm(id interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFilm", reflect.TypeOf((*MockCinemaService)(nil).DeleteFilm), id)
+}</span>
+
+// GetCinemas mocks base method.
+func (m *MockCinemaService) GetCinemas(sor string) ([]models.Cinema, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetCinemas", sor)
+        ret0, _ := ret[0].([]models.Cinema)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// GetCinemas indicates an expected call of GetCinemas.
+func (mr *MockCinemaServiceMockRecorder) GetCinemas(sor interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCinemas", reflect.TypeOf((*MockCinemaService)(nil).GetCinemas), sor)
+}</span>
+
+// InsertCinema mocks base method.
+func (m *MockCinemaService) InsertCinema(cinema models.Cinema) (int, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "InsertCinema", cinema)
+        ret0, _ := ret[0].(int)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// InsertCinema indicates an expected call of InsertCinema.
+func (mr *MockCinemaServiceMockRecorder) InsertCinema(cinema interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertCinema", reflect.TypeOf((*MockCinemaService)(nil).InsertCinema), cinema)
+}</span>
+
+// Search mocks base method.
+func (m *MockCinemaService) Search(search models.Search) ([]models.Cinema, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Search", search)
+        ret0, _ := ret[0].([]models.Cinema)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Search indicates an expected call of Search.
+func (mr *MockCinemaServiceMockRecorder) Search(search interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockCinemaService)(nil).Search), search)
+}</span>
+
+// UpdateFilm mocks base method.
+func (m *MockCinemaService) UpdateFilm(id string, cinema models.CinemaUpdate) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateFilm", id, cinema)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// UpdateFilm indicates an expected call of UpdateFilm.
+func (mr *MockCinemaServiceMockRecorder) UpdateFilm(id, cinema interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateFilm", reflect.TypeOf((*MockCinemaService)(nil).UpdateFilm), id, cinema)
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package service
+
+import (
+        "github.com/Futturi/vktest/internal/models"
+        "github.com/Futturi/vktest/internal/repository"
+)
+
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+type AuthService interface {
+        SignUp(User models.User) (int, error)
+        SignIn(User models.User) (string, error)
+        ParseToken(token string) (string, bool, error)
+        SignUpAdmin(Admin models.Admin) (int, error)
+        SignInAdmin(Admin models.Admin) (string, error)
+}
+
+type ActorService interface {
+        GetActors() ([]models.ActorSelect, error)
+        InsertActor(actor models.Actor) (int, error)
+        UpdateActor(id int, actor models.ActorUpdate) error
+        DeleteActor(id string) error
+}
+
+type CinemaService interface {
+        InsertCinema(cinema models.Cinema) (int, error)
+        UpdateFilm(id string, cinema models.CinemaUpdate) error
+        DeleteFilm(id string) error
+        GetCinemas(sor string) ([]models.Cinema, error)
+        Search(search models.Search) ([]models.Cinema, error)
+}
+
+type Service struct {
+        AuthService
+        ActorService
+        CinemaService
+}
+
+func NewService(repo *repository.Repository) *Service <span class="cov8" title="1">{
+        return &amp;Service{AuthService: NewAuthService(repo.Authorization),
+                ActorService:  NewActorService(repo.ActorRepo),
+                CinemaService: NewCinemaService(repo.CinemaRepo)}
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package utils
+
+import (
+        "crypto/sha1"
+        "fmt"
+)
+
+const (
+        salt = "erighwdjslaksjweqwojke2pqijfklbdfjnkjasnlkqergknlwenfkjeoiq2jflkgjevwnlkjqwn"
+)
+
+func HashPass(password string) string <span class="cov8" title="1">{
+        hash := sha1.New()
+        hash.Write([]byte(password))
+        return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+}</span>
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package pkg
+
+import (
+        "fmt"
+
+        "github.com/golang-migrate/migrate/v4"
+        _ "github.com/golang-migrate/migrate/v4/database/postgres"
+        _ "github.com/golang-migrate/migrate/v4/source/file"
+)
+
+func Migrat(host string) error <span class="cov0" title="0">{
+        m, err := migrate.New(
+                "file://internal/migrate", fmt.Sprintf(
+                        "postgres://postgres:postgres@%s:5432/postgres?sslmode=disable", host))
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return m.Up()</span>
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package pkg
+
+import (
+        "fmt"
+        "github.com/jmoiron/sqlx"
+        _ "github.com/lib/pq"
+)
+
+type PConfig struct {
+        Hostname string
+        Port     string
+        Username string
+        Password string
+        NameDB   string
+        SSLmode  string
+}
+
+func InitPostgres(cfg PConfig) (*sqlx.DB, error) <span class="cov8" title="1">{
+        conn, err := sqlx.Connect("postgres", fmt.Sprintf("host =%s port =%s user =%s dbname=%s password=%s sslmode=%s",
+                cfg.Hostname, cfg.Port, cfg.Username, cfg.NameDB, cfg.Password, cfg.SSLmode))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return conn, nil</span>
+}
+
+func ShutDown(db *sqlx.DB) error <span class="cov8" title="1">{
+        return db.Close()
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/api/actors": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get all actors",
                 "produces": [
                     "application/json"
@@ -42,6 +47,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "insert actor",
                 "consumes": [
                     "application/json"
@@ -70,8 +80,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/actors{id}": {
+        "/api/actors/{id}": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "update actor",
                 "consumes": [
                     "application/json"
@@ -100,6 +115,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete actor",
                 "consumes": [
                     "application/json"
@@ -130,6 +150,11 @@ const docTemplate = `{
         },
         "/api/cinemas": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "insert cinema",
                 "consumes": [
                     "application/json"
@@ -160,6 +185,11 @@ const docTemplate = `{
         },
         "/api/cinemas/search": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "search cinema",
                 "consumes": [
                     "application/json"
@@ -191,8 +221,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/cinemas{id}": {
+        "/api/cinemas/{id}": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "update cinema",
                 "consumes": [
                     "application/json"
@@ -221,6 +256,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete cinema",
                 "produces": [
                     "application/json"
@@ -246,8 +286,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/cinemas{sort}": {
+        "/api/cinemas/{sort}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get all cinemas",
                 "produces": [
                     "application/json"

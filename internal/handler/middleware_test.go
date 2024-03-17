@@ -60,6 +60,15 @@ func TestHandler_CheckIdentity(t *testing.T) {
 			expectedStatusCode:   401,
 			expectedResponseBody: "",
 		},
+		{
+			name:                 "len != 2",
+			headerName:           "Authorization",
+			headerValue:          "Bearer ajnfkjaqnf qwkjdhqwuhnd",
+			token:                "",
+			mockBehavior:         func(s *mock_service.MockAuthService, token string) {},
+			expectedStatusCode:   401,
+			expectedResponseBody: "",
+		},
 	}
 
 	for _, testCase := range testTable {
@@ -88,4 +97,22 @@ func TestHandler_CheckIdentity(t *testing.T) {
 		})
 	}
 
+}
+
+func TestHandler_GetPrivileage(t *testing.T) {
+	h := &Handl{}
+
+	r, _ := http.NewRequest("GET", "/", nil)
+	r.Header.Add(adminHeader, "true")
+	result := h.GetPrivileage(r)
+	if !result {
+		t.Errorf("Expected true, got %v", result)
+	}
+
+	r, _ = http.NewRequest("GET", "/", nil)
+	r.Header.Add(adminHeader, "false")
+	result = h.GetPrivileage(r)
+	if result {
+		t.Errorf("Expected false, got %v", result)
+	}
 }

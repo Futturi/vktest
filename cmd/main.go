@@ -25,7 +25,6 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-
 func main() {
 	logg := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	slog.SetDefault(logg)
@@ -50,9 +49,6 @@ func main() {
 	repo := repository.NewRepostitory(db)
 	service := service.NewService(repo)
 	han := handler.NewHandl(service)
-	if err := pkg.Migrat(viper.GetString("db.host")); err != nil {
-		slog.Error("error with migratedb", slog.Any("error", err))
-	}
 	server := new(server.Server)
 	go func() {
 		if err = server.InitServer(viper.GetString("port"), han.NewHan()); err != nil {
@@ -60,7 +56,9 @@ func main() {
 		}
 	}()
 	logg.Info("statring app in port: ", slog.String("port", viper.GetString("port")))
-
+	if err := pkg.Migrat(viper.GetString("db.host")); err != nil {
+		slog.Error("error with migratedb", slog.Any("error", err))
+	}
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit

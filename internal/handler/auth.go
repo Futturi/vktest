@@ -52,11 +52,8 @@ func (h *Handl) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ret := map[string]interface{}{"id": id}
-	str, err := json.Marshal(ret)
-	if err != nil {
-		slog.Error("error while marshalling body", slog.Any("error", err))
-		return
-	}
+	str, _ := json.Marshal(ret)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(str)
 	slog.Info("created user with ", slog.Any("values", ret))
 }
@@ -108,11 +105,8 @@ func (h *Handl) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Token := models.Token{Access: token}
-	byt, err := json.Marshal(Token)
-	if err != nil {
-		slog.Error("error while marshalling body", slog.Any("error", err))
-		return
-	}
+	byt, _ := json.Marshal(Token)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(byt)
 	slog.Info("user signed in with", slog.String("token", Token.Access))
 }
@@ -157,11 +151,9 @@ func (h *Handl) SignUpAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ret := map[string]interface{}{"id": id}
-	str, err := json.Marshal(ret)
-	if err != nil {
-		slog.Error("error while marshalling body", slog.Any("error", err))
-		return
-	}
+	str, _ := json.Marshal(ret)
+
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(str)
 	slog.Info("created admin with id: ", slog.Any("id", id))
 }
@@ -217,11 +209,8 @@ func (h *Handl) SignInAdmin(w http.ResponseWriter, r *http.Request) {
 		w.Write(str)
 	}
 	Token := models.Token{Access: token}
-	byt, err := json.Marshal(Token)
-	if err != nil {
-		slog.Error("error while marshalling body", slog.Any("error", err))
-		return
-	}
+	byt, _ := json.Marshal(Token)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(byt)
 	slog.Info("admin signed in with", slog.String("token", Token.Access))
 }

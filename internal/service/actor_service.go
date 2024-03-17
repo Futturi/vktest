@@ -31,13 +31,7 @@ func (a *Actor_Service) GetActors() ([]models.ActorSelect, error) {
 		}
 		tm := time.Unix(i, 0)
 		b = tm.Format("2006-Jan-02")
-		result = append(result, models.ActorSelect{
-			Id:      acr.Id,
-			Name:    acr.Name,
-			Genre:   acr.Genre,
-			Data:    b,
-			Cinemas: acr.Cinemas,
-		})
+		result = append(result, models.ActorSelect{Id: acr.Id, Name: acr.Name, Genre: acr.Genre, Data: b, Cinemas: acr.Cinemas})
 	}
 	return result, nil
 }

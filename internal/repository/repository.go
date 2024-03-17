@@ -13,18 +13,7 @@ const (
 	admintable   = "admins"
 )
 
-type Repository struct {
-	Authorization
-	ActorRepo
-	CinemaRepo
-}
-
-func NewRepostitory(db *sqlx.DB) *Repository {
-	return &Repository{Authorization: NewAuthRepo(db),
-		ActorRepo:  NewActorRepo(db),
-		CinemaRepo: NewCinemaRepo(db)}
-}
-
+//go:generate mockgen -source=repository.go -destination=mocksr/mockr.go
 type Authorization interface {
 	SignUp(User models.User) (int, error)
 	SignIn(User models.User) (int, error)
@@ -46,4 +35,16 @@ type CinemaRepo interface {
 	GetCinemas(sor string) ([]models.Cinema, error)
 	Search(search models.Search) ([]models.Cinema, []models.Cinema, error)
 	Unification(hash map[string]int) ([]models.Cinema, error)
+}
+
+type Repository struct {
+	Authorization
+	ActorRepo
+	CinemaRepo
+}
+
+func NewRepostitory(db *sqlx.DB) *Repository {
+	return &Repository{Authorization: NewAuthRepo(db),
+		ActorRepo:  NewActorRepo(db),
+		CinemaRepo: NewCinemaRepo(db)}
 }

@@ -29,13 +29,7 @@ func (r *Actor_Repo) GetActors() ([]models.ActorSelect, error) {
 		if err := r.db.Select(&cinemas, query2, acr.Id); err != nil {
 			return []models.ActorSelect{}, err
 		}
-		result = append(result, models.ActorSelect{
-			Id:      acr.Id,
-			Name:    acr.Name,
-			Genre:   acr.Genre,
-			Data:    acr.Data,
-			Cinemas: cinemas,
-		})
+		result = append(result, models.ActorSelect{Id: acr.Id, Name: acr.Name, Genre: acr.Genre, Data: acr.Data, Cinemas: cinemas})
 	}
 
 	return result, nil

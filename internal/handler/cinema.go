@@ -10,7 +10,7 @@ import (
 )
 
 // @Summary InsertCinema
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags cinemas
 // @Description insert cinema
 // @ID insert-cinemas
@@ -51,6 +51,7 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "error", http.StatusInternalServerError)
 				return
 			}
+			w.Header().Set("Content-Type", "application/json")
 			w.Write(byt2)
 		}
 	}
@@ -66,7 +67,7 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary UpdateCinema
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags cinemas
 // @Description update cinema
 // @ID update-cinemas
@@ -74,7 +75,7 @@ func (h *Handl) InsertFilm(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {string} id
 // @Failure default {string} error
-// @Router /api/cinemas{id} [put]
+// @Router /api/cinemas/{id} [put]
 func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -82,13 +83,8 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 	} else {
 		var cinema models.CinemaUpdate
 
-		byt, err := io.ReadAll(r.Body)
-		if err != nil {
-			slog.Error("error while inserting actor", slog.Any("error", err))
-			http.Error(w, "error", http.StatusBadRequest)
-			return
-		}
-		err = json.Unmarshal(byt, &cinema)
+		byt, _ := io.ReadAll(r.Body)
+		err := json.Unmarshal(byt, &cinema)
 		if err != nil {
 			slog.Error("error while unmarshalling body", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
@@ -102,25 +98,21 @@ func (h *Handl) UpdateFilm(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error", http.StatusBadRequest)
 			return
 		}
-		byt2, err := json.Marshal(map[string]string{"id": id})
-		if err != nil {
-			slog.Error("error while marshalling body", slog.Any("error", err))
-			http.Error(w, "error", http.StatusBadRequest)
-			return
-		}
+		byt2, _ := json.Marshal(map[string]string{"id": id})
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
 	}
 }
 
 // @Summary DeleteCinemas
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags cinemas
 // @Description delete cinema
 // @ID get-cinemas
 // @Produce json
 // @Success 200 {string} id
 // @Failure default {string} error
-// @Router /api/cinemas{id} [delete]
+// @Router /api/cinemas/{id} [delete]
 func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 	if !h.GetPrivileage(r) {
 		http.Error(w, "u havent privileage for doing this", http.StatusBadRequest)
@@ -133,25 +125,21 @@ func (h *Handl) DeleteFilm(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error", http.StatusBadRequest)
 			return
 		}
-		byt, err := json.Marshal(map[string]string{"id": id})
-		if err != nil {
-			slog.Error("error while marshalling result", slog.Any("error", err))
-			http.Error(w, "error", http.StatusBadRequest)
-			return
-		}
+		byt, _ := json.Marshal(map[string]string{"id": id})
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt)
 	}
 }
 
 // @Summary GetAllCinemas
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags cinemas
 // @Description get all cinemas
 // @ID get-cinemas
 // @Produce json
 // @Success 200 {object} []models.Cinema
 // @Failure default {string} error
-// @Router /api/cinemas{sort} [get]
+// @Router /api/cinemas/{sort} [get]
 func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 	var sor string
 	switch {
@@ -172,17 +160,13 @@ func (h *Handl) GetFilms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	slog.Info("123", slog.Any("123", cinemas))
-	byt, err := json.Marshal(cinemas)
-	if err != nil {
-		slog.Error("error while marshalling cinemas", slog.Any("error", err))
-		http.Error(w, "error", http.StatusInternalServerError)
-		return
-	}
+	byt, _ := json.Marshal(cinemas)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(byt)
 }
 
 // @Summary SearchCinema
-// @Secutiry ApiKeyAuth
+// @Security ApiKeyAuth
 // @Tags cinemas
 // @Description search cinema
 // @ID search-cinemas
@@ -198,22 +182,22 @@ func (h *Handl) Search(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.Error("error with data", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		err = json.Unmarshal(byt, &search)
 		if err != nil {
 			slog.Error("error while unmarshalling data", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
 		cinemas, err := h.service.Search(search)
 		if err != nil {
 			slog.Error("error while searching data", slog.Any("error", err))
 			http.Error(w, "error", http.StatusBadRequest)
+			return
 		}
-		byt2, err := json.Marshal(cinemas)
-		if err != nil {
-			slog.Error("error while marshalling data", slog.Any("error", err))
-			http.Error(w, "error", http.StatusBadRequest)
-		}
+		byt2, _ := json.Marshal(cinemas)
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(byt2)
 	}
 }
