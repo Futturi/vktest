@@ -44,6 +44,7 @@ func main() {
 	db, err := pkg.InitPostgres(pcfg)
 	if err != nil {
 		slog.Error("error with db", slog.Any("error", err))
+		return
 	}
 
 	repo := repository.NewRepostitory(db)
@@ -53,11 +54,13 @@ func main() {
 	go func() {
 		if err = server.InitServer(viper.GetString("port"), han.NewHan()); err != nil {
 			slog.Error("error with server", slog.Any("error", err))
+			return
 		}
 	}()
 	logg.Info("statring app in port: ", slog.String("port", viper.GetString("port")))
 	if err := pkg.Migrat(viper.GetString("db.host")); err != nil {
 		slog.Error("error with migratedb", slog.Any("error", err))
+		return
 	}
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
