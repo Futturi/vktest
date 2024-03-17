@@ -60,7 +60,6 @@ func main() {
 	logg.Info("statring app in port: ", slog.String("port", viper.GetString("port")))
 	if err := pkg.Migrat(viper.GetString("db.host")); err != nil {
 		slog.Error("error with migratedb", slog.Any("error", err))
-		return
 	}
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
